@@ -16,24 +16,32 @@ changelist_init/
     file_validation.py
     input_data.py
     string_validation.py
+  data/
+    __init__.py
+    change_data.py
+    changelist_data.py
+    git_file_status.py
+    git_status_lists.py
   workspace/
     __init__.py
     changelists_reader.py
     workspace_reader.py
     xml_reader.py
   __main__.py
-  change_data.py
-  changelist_data.py
 test/
   __init__.py
   input/
     __init__.py
     test_argument_parser.py
     test_string_validation.py
+  data/
+    __init__.py
+    test_changelist_data.py
+    test_change_data.py
+    test_git_file_status.py
+    test_git_status_lists.py
   workspace/
     __init__.py
     test_changelists_reader.py
     test_workspace_reader.py
     test_xml_reader.py
-  test_changelist_data.py
-  test_change_data.py
