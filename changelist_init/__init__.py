@@ -54,31 +54,13 @@ def merge_file_changes(
             Changelist('12345678', "Initial Changelist", files, "", True)
         )
         return True
-    for f in files:
-        _find_or_insert(existing_lists, f)
+    # Validate files in existing lists
+    for e_list in existing_lists:
+        for c in e_list.changes:
+            if c in files:
+                files.remove(c)
+            else:
+                e_list.changes.remove(c)
+    # Add the remaining new files
+    existing_lists[0].changes.extend(files)
     return True
-
-
-def _find_or_insert(
-    lists: list[Changelist],
-    file: FileChange,
-) -> bool:
-    """ Returns True If Successful.
-    """
-    if _try_find(lists, file):
-        return True
-    lists[0].changes.append(file)
-    return True
-
-
-def _try_find(
-    lists: list[Changelist],
-    file: FileChange
-) -> bool:
-    """ Returns True if File Already Found.
-    """
-    for cl in lists:
-        for c in cl.changes:
-            if c.before_path == file.before_path and c.after_path == file.after_path:
-                return True
-    return False
