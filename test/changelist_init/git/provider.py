@@ -77,7 +77,7 @@ M  {SECOND_FILE_PATH}
 def multi_init_this():
     """ The Git Status Output from this project during the peak of init-development.
     """
-    return f""" M .ftb/initialize.treescript
+    return """ M .ftb/initialize.treescript
 A  .github/dependabot.yml
 AM .github/workflows/ci_run.yml
 A  .github/workflows/linting.yml
