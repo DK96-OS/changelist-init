@@ -3,10 +3,9 @@
 from pathlib import Path
 
 from changelist_data.storage import load_storage
-from changelist_data.storage.storage_type import StorageType
 from changelist_data.storage.changelist_data_storage import ChangelistDataStorage
+from changelist_data.storage.storage_type import StorageType
 
-from changelist_init.input.argument_data import ArgumentData
 from changelist_init.input.argument_parser import parse_arguments
 from changelist_init.input.input_data import InputData
 
