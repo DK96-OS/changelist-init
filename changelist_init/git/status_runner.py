@@ -10,13 +10,13 @@ def run_git_status() -> str:
     str - The output of the Git Status Operation.
     """
     result = subprocess.run(
-        args=['git status -s'],
+        args=['git', 'status', '-s'],
         capture_output=True,
         text=True,
-        stdout=subprocess.PIPE,
         universal_newlines=True,
-        shell=True,
+        shell=False,
         timeout=5,
     )
-    #error = result.stderr
+    if (error := result.stderr) is not None and not len(error) < 1:
+        exit(f"Git Status Runner Error: {error}")
     return result.stdout
