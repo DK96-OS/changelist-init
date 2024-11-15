@@ -67,11 +67,11 @@ Use the `get_status_lists()` method to obtain updated file information from git.
 #### Internal Modules
 
 **Status Runner**:
-- `run_git_status() -> str`: Runs a Git Status short operation, returns the stdout.
+- `run_git_status() -> str`: Runs a Git Status Porcelain V1 operation, returns the stdout.
 
 **Status Reader**:
-- `read_git_status_output(str) -> GitStatusLists`: Read Git Status short stdout.
-- `read_git_status_line(str) -> GitFileStatus | None`: Read a single line of Git Status short.
+- `read_git_status_output(str) -> GitStatusLists`: Read Git Status Porcelain V1 stdout.
+- `read_git_status_line(str) -> GitFileStatus | None`: Read a single line of Git Status Porcelain V1.
 
 **Status Codes**:
 - `get_status_code_change_map(str) -> Callable[]`: Construct a FileChange map function for a Git Status code.
