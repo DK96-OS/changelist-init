@@ -10,7 +10,7 @@ def run_git_status() -> str:
     str - The output of the Git Status Operation.
     """
     result = subprocess.run(
-        args=['git', 'status', '--porcelain'],
+        args=['git', '--no-optional-locks', 'status', '--porcelain'],
         capture_output=True,
         text=True,
         universal_newlines=True,
