@@ -22,7 +22,7 @@ def read_git_status_output(
         if (file_status := read_git_status_line(f)) is not None:
             status_lists.add_file_status(file_status)
         else:
-            print(f"Failed To Process File Line: ${f}")
+            print(f"Skipped: ${f}")
     return status_lists
 
 
@@ -35,7 +35,9 @@ def read_git_status_line(
         return None
     if len(file_status_line.strip()) < 3:
         return None
+    if file_status_line.endswith('/'):
+        return None
     return GitFileStatus(
-        file_status_line[:2],
-        file_status_line[3:],
+        code=file_status_line[:2],
+        file_path=file_status_line[3:],
     )
