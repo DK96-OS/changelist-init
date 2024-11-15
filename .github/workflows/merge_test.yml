@@ -28,6 +28,9 @@ jobs:
           pip install -r requirements.txt
           pip install pytest==8.3.3 pytest-cov==5.0.0
 
+      - name: Install Git
+        run: sudo apt install git
+
       - name: Run unit tests
         run: pytest test/ --cov=changelist_init --cov-report=html
 
