@@ -28,7 +28,7 @@ def run_untracked_status() -> str:
     """
     # Add All Untracked Paths without staging
     git_add_output = subprocess.run(
-        args='git add -N .',
+        args=['git', 'add', '-N', '.'],
         capture_output=True,
         text=True,
         universal_newlines=True,
