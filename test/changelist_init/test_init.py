@@ -129,7 +129,8 @@ def test_initialize_file_changes_all_changes_given_multi_init_this_returns_file_
     with pytest.MonkeyPatch.context() as c:
         c.setattr(subprocess, 'run', lambda **kwargs: wrap_stdout(provider.multi_init_this()))
         result = initialize_file_changes(input_all)
-    assert len(result) == 35
+    # Includes untracked files, but ignores Directories
+    assert len(result) == 33
 
 
 def test_merge_file_changes_empty_lists_returns_true():
