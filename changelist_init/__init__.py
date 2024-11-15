@@ -18,9 +18,9 @@ def initialize_file_changes(
     """ Get up-to-date File Change information in a list.
     """
     if input_data.include_untracked:
-        file_status_generator = get_status_lists().merge_all()
+        file_status_generator = get_status_lists(True).merge_all()
     else:
-        file_status_generator = get_status_lists().merge_tracked()
+        file_status_generator = get_status_lists(False).merge_tracked()
     return list(
         _map_file_status_to_changes(file_status_generator)
     )
