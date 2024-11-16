@@ -40,7 +40,7 @@ def run_untracked_status() -> str:
     #
     result = run_git_status()
     # Reset git to remove Untracked paths
-    subprocess.run(
+    git_reset_output = subprocess.run(
         args=['git', 'reset'],
         capture_output=True,
         text=True,
@@ -48,6 +48,6 @@ def run_untracked_status() -> str:
         shell=False,
         timeout=3,
     )
-    if (error := git_add_output.stderr) is not None and not len(error) < 1:
+    if (error := git_reset_output.stderr) is not None and not len(error) < 1:
         exit(f"Git Reset Error: {error}")
     return result
