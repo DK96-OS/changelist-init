@@ -8,7 +8,7 @@ from changelist_data.file_change import FileChange
 
 from changelist_init.git import get_status_lists
 from changelist_init.git.git_file_status import GitFileStatus
-from changelist_init.git.status_codes import get_status_code_change_map
+from changelist_init.git.status_change_mapping import get_status_code_change_map, map_status_path_to_change
 from changelist_init.input import InputData
 
 
@@ -38,9 +38,11 @@ def _map_file_status_to_changes(
     FileChange - Yield by Generator.
     """
     for code, group in groupby(git_files, lambda w: w.code):
-        mapper = get_status_code_change_map(code)
-        for g in group:
-            yield mapper(g.file_path)
+        mapping_function = get_status_code_change_map(code)
+        for file_status in group:
+            yield mapping_function(
+                map_status_path_to_change(file_status.file_path)
+            )
 
 
 def merge_file_changes(
