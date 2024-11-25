@@ -1,4 +1,4 @@
-"""
+""" Testing changelist_init Package-Level Method initialize_file_changes.
 """
 import subprocess
 from typing import Callable
@@ -6,6 +6,7 @@ from typing import Callable
 import pytest
 
 from changelist_init import initialize_file_changes
+
 from test.changelist_init.conftest import FC_PATH_SETUP
 
 
@@ -102,6 +103,7 @@ def test_initialize_file_changes_tracked_only_given_single_unstaged_modify_retur
         result = initialize_file_changes(input_tracked)
     assert len(result) == 1
     assert result[0].after_path == result[0].before_path
+    assert result[0].after_path == FC_PATH_SETUP
 
 
 def test_initialize_file_changes_all_changes_given_single_unstaged_modify_returns_file_change(
@@ -113,6 +115,7 @@ def test_initialize_file_changes_all_changes_given_single_unstaged_modify_return
         result = initialize_file_changes(input_all)
     assert len(result) == 1
     assert result[0].after_path == result[0].before_path
+    assert result[0].after_path == FC_PATH_SETUP
 
 
 def test_initialize_file_changes_tracked_only_given_single_staged_modify_returns_file_change(
@@ -124,6 +127,7 @@ def test_initialize_file_changes_tracked_only_given_single_staged_modify_returns
         result = initialize_file_changes(input_tracked)
     assert len(result) == 1
     assert result[0].after_path == result[0].before_path
+    assert result[0].after_path == FC_PATH_SETUP
 
 
 def test_initialize_file_changes_all_changes_given_single_staged_modify_returns_file_change(
@@ -135,6 +139,7 @@ def test_initialize_file_changes_all_changes_given_single_staged_modify_returns_
         result = initialize_file_changes(input_all)
     assert len(result) == 1
     assert result[0].after_path == result[0].before_path
+    assert result[0].after_path == FC_PATH_SETUP
 
 
 def test_initialize_file_changes_tracked_only_given_multi_init_this_returns_file_changes(
