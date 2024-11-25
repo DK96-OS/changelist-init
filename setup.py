@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="changelist-init",
-    version="0.1.2",
+    version="0.1.3",
 	author='DK96-OS',
 	description='Initialize and update Changelists information.',
     long_description=open('README.md').read(),
@@ -18,7 +18,7 @@ setup(
 	license='GPLv3',
     packages=find_packages(exclude=['test']),
     install_requires=[
-        'changelist-data >= 0.1.2, < 0.2',
+        'changelist-data >= 0.1.4, < 0.2',
     ],
     entry_points={
         'console_scripts': [

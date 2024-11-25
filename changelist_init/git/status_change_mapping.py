@@ -1,12 +1,20 @@
-""" Managing Git Status Codes.
+""" Maps Git Status data into FileChange data.
 """
 from typing import Callable
 
 from changelist_data.file_change import FileChange
 
 
-def get_status_code_change_map(code) -> Callable[[str, ], FileChange]:
-    """ Get a mapping callable for a specific code.
+def get_status_code_change_map(
+    code: str,
+) -> Callable[[str, ], FileChange]:
+    """ Get a FileChange mapping callable for a specific code.
+
+    Parameters:
+    - code (str): The status code, determining what kind of FileChange (create, modify, delete)
+
+    Returns:
+    Callable[str, FileChange] - A function that maps a FileChange path into the FileChange object.
     """
     if code in ('M ', ' M', 'MM'):
         return lambda x: FileChange(before_path=x, before_dir=False, after_dir=False, after_path=x)
@@ -17,6 +25,15 @@ def get_status_code_change_map(code) -> Callable[[str, ], FileChange]:
     if '?' in code or '!' in code:
         return lambda x: FileChange(after_dir=False, after_path=x)
     exit(f"Unknown Code: {code}")
+
+
+def map_status_path_to_change(
+    status_path: str,
+) -> str:
+    """ Convert Status File path to FileChange path.
+        Adds a leading slash character.
+    """
+    return '/' + status_path if not status_path.startswith('/') else status_path
 
 
 #GIT_FILE_STATUS_CODES = ["M", "T", "A", "D", "R", "C"]
