@@ -63,8 +63,8 @@ def merge_file_changes(
 
 
 def _map_merge_fc(
-    existing_lists: list[Changelist],
-    files: list[FileChange],
+    changelists: list[Changelist],
+    file_changes: list[FileChange],
 ) -> Generator[FileChange, None, None]:
     """ Merge FileChanges into existing Changelists using a map.
         Yields FileChange objects that were not mapped to an existing Changelist.
@@ -76,13 +76,13 @@ def _map_merge_fc(
     Returns:
     Generator[FileChange] - The FileChange objects that are new, not present in existing Changelists.
     """
-    m = _init_existing_fc_map(existing_lists)
+    cl_map = _init_existing_fc_map(changelists)
     # Clear Existing Lists before merging new Files
-    for e in existing_lists:
-        e.changes.clear()
+    for cl in changelists:
+        cl.changes.clear()
     # Search for matches using map
-    for fc in files:
-        if not _map_fc_into_cl(m, fc):
+    for fc in file_changes:
+        if not _map_fc_into_cl(cl_map, fc):
             yield fc
 
 
@@ -97,14 +97,14 @@ def _init_existing_fc_map(
     Returns:
     dict[str, Changelist] - A map from file path to the Changelist object that contains it.
     """
-    m = {}
-    for e in changelists:
-        for fc in e.changes:
+    cl_map = {}
+    for cl in changelists:
+        for fc in cl.changes:
             if (before := fc.before_path) is not None:
-                m[before] = e
+                cl_map[before] = cl
             if (after := fc.after_path) is not None:
-                m[after] = e
-    return m
+                cl_map[after] = cl
+    return cl_map
 
 
 def _map_fc_into_cl(
