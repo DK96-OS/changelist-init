@@ -1,11 +1,12 @@
 #!/usr/bin/python
 from sys import argv, path
 
-from changelist_init import initialize_file_changes, merge_file_changes
-from changelist_init.input import validate_input
-
 
 def main():
+    # Have to import after appending parent dir to path
+    from changelist_init.input import validate_input
+    from changelist_init import initialize_file_changes, merge_file_changes
+    #
     input_data = validate_input(argv[1:])
     cl = input_data.storage.get_changelists()
     if merge_file_changes(cl, initialize_file_changes(input_data)):

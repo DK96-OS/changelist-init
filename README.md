@@ -13,11 +13,15 @@ It plays the role of adding file changes from **git** into the project changelis
 The related packages `sort` and `foci` serve other changelist management functions by reading, and writing to, the project changelist data file.
 
 ### Related Packages
-The package `changelist-sort` is for organizing the files in your Changelists.
+The package [`changelist-sort`](https://github.com/DK96-OS/changelist-sort) is for organizing the files in your Changelists.
 - Sorts files into Changelists by directory
 
-The package `changelist-foci` (File Oriented Commit Information) prints a commit message template for your Changelists.
+The package [`changelist-foci`](https://github.com/DK96-OS/changelist-foci) (File Oriented Commit Information) prints a commit message template for your Changelists.
 - Various File Name and Path formatting options
+
+The package [`changelist-data`](https://github.com/DK96-OS/changelist-data) is a dependency of all Changelist packages.
+- Provides read and write access to data files
+- Contains common data classes, handles data serialization
 
 ## Package Details
 
@@ -67,11 +71,12 @@ Use the `get_status_lists()` method to obtain updated file information from git.
 #### Internal Modules
 
 **Status Runner**:
-- `run_git_status() -> str`: Runs a Git Status short operation, returns the stdout.
+- `run_git_status() -> str`: Runs a Git Status Porcelain V1 operation, returns the stdout.
+- `run_untracked_status() -> str`: Runs a sequence of Git operations to include untracked files in the Git Status output.
 
 **Status Reader**:
-- `read_git_status_output(str) -> GitStatusLists`: Read Git Status short stdout.
-- `read_git_status_line(str) -> GitFileStatus | None`: Read a single line of Git Status short.
+- `read_git_status_output(str) -> GitStatusLists`: Read Git Status Porcelain V1 stdout.
+- `read_git_status_line(str) -> GitFileStatus | None`: Read a single line of Git Status Porcelain V1. Ignores Directory lines.
 
 **Status Codes**:
 - `get_status_code_change_map(str) -> Callable[]`: Construct a FileChange map function for a Git Status code.
