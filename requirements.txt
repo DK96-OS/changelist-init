@@ -1,1 +1,1 @@
-changelist-data == 0.1.4
+changelist-data ~= 0.2
