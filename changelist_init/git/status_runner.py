@@ -24,7 +24,8 @@ def run_git_status() -> str:
 
 def run_untracked_status() -> str:
     """ Configure git for obtaining untracked files, then reset.
-        Uses multiple git commands to achieve the desired result.
+        - Uses multiple git commands to achieve the desired result.
+        - Runs a Git Add command, then a soft reset.
     """
     # Add All Untracked Paths without staging
     git_add_output = subprocess.run(
@@ -39,9 +40,10 @@ def run_untracked_status() -> str:
         exit(f"Git Add Error: {error}")
     #
     result = run_git_status()
-    # Reset git to remove Untracked paths
+    # Before returning result, reset git to keep staging area clean
+    # Use a soft reset, instead of default (mixed)
     git_reset_output = subprocess.run(
-        args=['git', 'reset'],
+        args=['git', 'reset', '-q', '--soft'],
         capture_output=True,
         text=True,
         universal_newlines=True,
