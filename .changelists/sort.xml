@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sorting>
+    <changelist name="CL-Init Input Package" module="module">
+        <files path_start="changelist_init/input" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="CL-Init Git Package" module="module">
+        <files path_start="changelist_init/git" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="CL-Init Main Package" module="module">
+        <files path_start="changelist_init/" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Main Package">
+        <files path_end="changelist_init" />
+        <files path_start="test/changelist_init" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Input Package">
+        <files path_start="test/changelist_init/input" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Git Package">
+        <files path_start="test/changelist_init/git" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Package">
+        <files path_start="test/" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist key="github_workflows" name="GitHub Workflows" module="hidden">
+        <files first_dir=".github"/>
+        <files path_end="workflows"/>
+        <files file_ext="yml"/>
+    </changelist>
+    <changelist key="github_dependabot" name="GitHub Dependabot" module="hidden">
+        <files first_dir=".github"/>
+        <files filename_prefix="dependabot"/>
+        <files file_ext="yml"/>
+    </changelist>
+    <changelist key="root_python" name="Root Project Python Files" module="root">
+        <files file_ext="py"/>
+    </changelist>
+    <changelist key="hidden_files" name="Hidden Files In Hidden Directories" module="hidden">
+        <files filename_prefix="."/>
+    </changelist>
+    <changelist key="root" name="Hidden Root Project Files" module="root">
+        <files filename_prefix="."/>
+    </changelist>
+</sorting>
