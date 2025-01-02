@@ -5,11 +5,15 @@ package-mode = false
 python = "^3.10"
 changelist-data = "^0.2"
 
-[tool.poetry.group.test.dependencies]
+[tool.poetry.group.test]
 optional = true
+
+[tool.poetry.group.test.dependencies]
 pytest = "8.3.4"
 pytest-cov = "5.0.0"
 
-[tool.poetry.group.docs.dependencies]
+[tool.poetry.group.docs]
 optional = true
+
+[tool.poetry.group.docs.dependencies]
 mkdocs = "*"
