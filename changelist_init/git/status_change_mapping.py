@@ -1,8 +1,30 @@
 """ Maps Git Status data into FileChange data.
 """
-from typing import Callable
+from itertools import groupby
+from typing import Callable, Iterable, Generator
 
 from changelist_data.file_change import FileChange
+
+from changelist_init.git.git_file_status import GitFileStatus
+
+
+def map_file_status_to_changes(
+    git_files: Iterable[GitFileStatus],
+) -> Generator[FileChange, None, None]:
+    """ Categorize by Status Code, and Map to FileChange data objects.
+
+    Parameters:
+    - git_files (Iterable[GitFileStatus]): An iterable or Generator providing GitFileStatus objects.
+
+    Returns:
+    FileChange - Yield by Generator.
+    """
+    for code, group in groupby(git_files, lambda w: w.code):
+        mapping_function = get_status_code_change_map(code)
+        for file_status in group:
+            yield mapping_function(
+                map_status_path_to_change(file_status.file_path)
+            )
 
 
 def get_status_code_change_map(
@@ -34,30 +56,3 @@ def map_status_path_to_change(
         Adds a leading slash character.
     """
     return '/' + status_path if not status_path.startswith('/') else status_path
-
-
-#GIT_FILE_STATUS_CODES = ["M", "T", "A", "D", "R", "C"]
-
-#def decode_status_code(
-#    code_char: str
-#) -> str | None:
-#    """ Return the English Keyword describing the Status of the file, given the Code.
-#    """
-#    match code_char:
-#        case 'M', 'U':
-#            return "Updated"
-#        case 'T':
-#            return "TypeChange"
-#        case 'A':
-#            return "Added"
-#        case 'D':
-#            return "Deleted"
-#        case 'R':
-#            return "Renamed"
-#        case 'C':
-#            return "Copied"
-#        case '?':
-#            return "Untracked"
-#        case '!':
-#            return "Ignored"
-#    return None
