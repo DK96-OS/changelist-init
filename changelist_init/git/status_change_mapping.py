@@ -3,6 +3,7 @@
 from itertools import groupby
 from typing import Callable, Iterable, Generator
 
+from changelist_data import file_change
 from changelist_data.file_change import FileChange
 
 from changelist_init.git.git_file_status import GitFileStatus
@@ -39,13 +40,13 @@ def get_status_code_change_map(
     Callable[str, FileChange] - A function that maps a FileChange path into the FileChange object.
     """
     if code in ('M ', ' M', 'MM'):
-        return lambda x: FileChange(before_path=x, before_dir=False, after_dir=False, after_path=x)
+        return file_change.update_fc
     if code in ('A ', ' A', 'AM', 'MA'):
-        return lambda x: FileChange(after_dir=False, after_path=x)
+        return file_change.create_fc
     if code in ('D ', ' D', 'MD', 'DM'):
-        return lambda x: FileChange(before_dir=False, before_path=x)
+        return file_change.delete_fc
     if '?' in code or '!' in code:
-        return lambda x: FileChange(after_dir=False, after_path=x)
+        return file_change.create_fc
     exit(f"Unknown Code: {code}")
 
 
