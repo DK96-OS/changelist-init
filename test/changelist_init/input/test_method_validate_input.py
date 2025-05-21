@@ -43,3 +43,9 @@ def test_validate_input_invalid_arg_raises_exit():
     except SystemExit:
         raises_exit = True
     assert raises_exit
+
+
+def test_validate_input_generate_sort_xml_():
+    args = ['--generate_sort_xml',]
+    result = validate_input(args)
+    assert result.generate_sort_xml
