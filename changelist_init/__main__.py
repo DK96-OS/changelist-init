@@ -2,15 +2,21 @@
 from sys import argv, path
 
 
-def main():
-    # Have to import after appending parent dir to path
-    from changelist_init.input import validate_input
-    from changelist_init import initialize_file_changes, merge_file_changes
-    #
-    input_data = validate_input(argv[1:])
-    cl = input_data.storage.get_changelists()
-    if merge_file_changes(cl, initialize_file_changes(input_data)):
-        # Successful Merge
+def main(): # Have to import after appending parent dir to path
+    import changelist_init
+    input_data = changelist_init.input.validate_input(argv[1:])
+    # Generate the Sorting Configuration file
+    if input_data.generate_sort_xml:
+        from changelist_init.xml_generator import generate_sort_xml
+        if generate_sort_xml():
+            print("The file has been created: .changelists/sort.xml")
+        else:
+            print("Failed to create the sort.xml file.")
+    # Get New FileChange Information, Merge into Changelists Data
+    if changelist_init.merge_file_changes(
+        cl := input_data.storage.get_changelists(),
+        changelist_init.git.generate_file_changes(input_data.include_untracked)
+    ): # Successful Merge
         input_data.storage.update_changelists(cl)
         input_data.storage.write_to_storage()
     else:

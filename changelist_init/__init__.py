@@ -1,6 +1,8 @@
 """ Changelist Init Package.
 """
-from changelist_data.changelist import Changelist
+from typing import Iterable
+
+from changelist_data.changelist import Changelist, get_default_cl
 from changelist_data.file_change import FileChange
 
 from changelist_init import git, fc_to_cl_map
@@ -28,7 +30,7 @@ def initialize_file_changes(
 
 def merge_file_changes(
     existing_lists: list[Changelist],
-    files: list[FileChange],
+    files: Iterable[FileChange],
 ) -> bool:
     """ Carefully Merge FileChange into Changelists.
  - Inserts all files into the default Changelist.
@@ -41,14 +43,20 @@ def merge_file_changes(
 **Returns:**
  bool - True after the operation has finished.
     """
-    if (default_cl := _get_default_cl(existing_lists)) is not None:
+    if (default_cl := get_default_cl(existing_lists)) is not None:
         default_cl.changes.extend(
-            fc_to_cl_map.merge_fc_generator(existing_lists, files)
+            fc_to_cl_map.merge_fc_generator(
+                changelists=existing_lists,
+                file_changes=files,
+            )
         )
     else:
-        existing_lists.append(
-            Changelist(_DEFAULT_CHANGELIST_ID, _DEFAULT_CHANGELIST_NAME, files, is_default=True)
-        )
+        existing_lists.append(Changelist(
+            id=_DEFAULT_CHANGELIST_ID,
+            name=_DEFAULT_CHANGELIST_NAME,
+            changes=files if isinstance(files, list) else list(files),
+            is_default=True,
+        ))
     return True
 
 
