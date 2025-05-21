@@ -52,8 +52,8 @@ def _validate_arguments(
     return ArgumentData(
         changelists_file=parsed_args.changelists_file,
         workspace_file=parsed_args.workspace_file,
-        #
         include_untracked=parsed_args.include_untracked,
+        generate_sort_xml=parsed_args.generate_sort_xml,
     )
 
 
