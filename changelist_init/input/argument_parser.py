@@ -53,7 +53,6 @@ def _validate_arguments(
         changelists_file=parsed_args.changelists_file,
         workspace_file=parsed_args.workspace_file,
         include_untracked=parsed_args.include_untracked,
-        generate_sort_xml=parsed_args.generate_sort_xml,
     )
 
 
@@ -86,11 +85,5 @@ def _define_arguments() -> ArgumentParser:
         action='store_true',
         default=False,
         help='The option to include untracked files in changelists.',
-    )
-    parser.add_argument(
-        "--generate_sort_xml", "--sort_xml",
-        action='store_true',
-        default=False,
-        help='Generate the .changelist/sort.xml file for the project.',
     )
     return parser
