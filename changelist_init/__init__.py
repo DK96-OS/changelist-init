@@ -2,6 +2,7 @@
 """
 from typing import Iterable
 
+from changelist_data import ChangelistDataStorage
 from changelist_data.changelist import Changelist, get_default_cl
 from changelist_data.file_change import FileChange
 
@@ -32,8 +33,9 @@ def merge_file_changes(
     existing_lists: list[Changelist],
     files: Iterable[FileChange],
 ) -> bool:
-    """ Carefully Merge FileChange into Changelists.
- - Inserts all files into the default Changelist.
+    """ Merge FileChange into Changelists.
+ - Leaves existing files in their Changelists.
+ - Inserts all new files into the default Changelist.
  - Creates InitialChangelist with id:12345678 containing all files, if existing lists empty.
 
 **Parameters:**
@@ -60,15 +62,22 @@ def merge_file_changes(
     return True
 
 
-def _get_default_cl(
-    lists: list[Changelist],
-) -> Changelist | None:
-    """ Find the Default Changelist, or set the first Changelist to default.
-        Returns None if lists is empty.
+def init_storage(
+    storage: ChangelistDataStorage,
+    include_untracked: bool,
+) -> bool:
+    """ Get New FileChange Information, Merge into Changelists Data.
+
+**Parameters:*
+ - storage (ChangelistDataStorage): The Storage object to obtain existing CL from, and send updates to.
+ - include_untracked (bool): Whether to tell git to include untracked files.
+
+**Returns:**
+ bool - True if the initialized data merged into Changelists Storage object successfully.
     """
-    for cl in lists:
-        if cl.is_default:
-            return cl
-    if len(lists) > 0: # First if no default attribute found
-        return lists[0]
-    return None
+    if not merge_file_changes(
+        cl := storage.get_changelists(),
+        git.generate_file_changes(include_untracked)
+    ): return False
+    storage.update_changelists(cl)
+    return True # Successful Merge
