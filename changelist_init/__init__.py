@@ -78,6 +78,7 @@ def init_storage(
     if not merge_file_changes(
         cl := storage.get_changelists(),
         git.generate_file_changes(include_untracked)
-    ): return False
+    ):
+        return False
     storage.update_changelists(cl)
     return True # Successful Merge
