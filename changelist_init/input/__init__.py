@@ -21,5 +21,4 @@ def validate_input(
     return InputData(
         storage=load_storage_from_file_arguments(arg_data.changelists_file, arg_data.workspace_file),
         include_untracked=arg_data.include_untracked,
-        generate_sort_xml=arg_data.generate_sort_xml,
     )
