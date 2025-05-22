@@ -12,8 +12,6 @@ class InputData:
 **Fields:**
  - storage (ChangelistDataStorage): The Storage object used for Data IO.
  - include_untracked (bool): Whether to include untracked files.
- - generate_sort_xml (bool): Flag to create a Sort XML file for the project changelists.
     """
     storage: ChangelistDataStorage
     include_untracked: bool = False
-    generate_sort_xml: bool = False
