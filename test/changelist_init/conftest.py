@@ -4,6 +4,7 @@ from typing import Callable
 from unittest.mock import Mock
 
 import pytest
+from changelist_data import file_change
 
 from changelist_data.changelist import Changelist
 from changelist_data.file_change import FileChange
@@ -21,18 +22,6 @@ _SAMPLE_FC_2 = "/test/test_method_initialize_file_changes.py"
 
 def _sample_fc_n(n: int = 1) -> str:
     return f"/src/source_file{n}.py"
-
-
-def create_fc(path: str = _SAMPLE_FC_0) -> FileChange:
-    return FileChange(after_path=path, after_dir=False)
-
-
-def update_fc(path: str = _SAMPLE_FC_0) -> FileChange:
-    return FileChange(before_path=path, before_dir=False, after_path=path, after_dir=False)
-
-
-def delete_fc(path: str = _SAMPLE_FC_0) -> FileChange:
-    return FileChange(before_path=path, before_dir=False)
 
 
 def get_default_cl(changes: list[FileChange] | None = None):
@@ -58,15 +47,15 @@ def get_test_cl(changes: list[FileChange] | None = None):
 
 
 def root_cl_create_file():
-    return get_root_cl([create_fc()])
+    return get_root_cl([file_change.create_fc(_SAMPLE_FC_0)])
 
 
 def root_cl_update_file():
-    return get_root_cl([update_fc()])
+    return get_root_cl([file_change.update_fc(_SAMPLE_FC_0)])
 
 
 def root_cl_delete_file():
-    return get_root_cl([delete_fc()])
+    return get_root_cl([file_change.delete_fc(_SAMPLE_FC_0)])
 
 
 def get_sample_fc_path(number: int) -> str:
@@ -108,11 +97,11 @@ def fc_sample_list(
     output = []
     for i, c in enumerate(fc_input):
         if c == 'c':
-            output.append(create_fc(get_sample_fc_path(i)))
+            output.append(file_change.create_fc(get_sample_fc_path(i)))
         elif c == 'u':
-            output.append(update_fc(get_sample_fc_path(i)))
+            output.append(file_change.update_fc(get_sample_fc_path(i)))
         elif c == 'd':
-            output.append(delete_fc(get_sample_fc_path(i)))
+            output.append(file_change.delete_fc(get_sample_fc_path(i)))
         elif c == ' ':
             pass    # Skip this file path
         else:

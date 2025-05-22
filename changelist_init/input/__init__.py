@@ -10,6 +10,12 @@ def validate_input(
     arguments: list[str],
 ) -> InputData:
     """ Parse and Validate the Arguments, and return Input Data.
+
+**Parameters:**
+ - arguments (list[str]): The arguments received by the program.
+
+**Returns:**
+ InputData - The InputData containing the program inputs. The other packages will process the data from here.
     """
     arg_data = parse_arguments(arguments)
     return InputData(

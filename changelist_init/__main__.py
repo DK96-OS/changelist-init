@@ -2,19 +2,18 @@
 from sys import argv, path
 
 
-def main():
-    # Have to import after appending parent dir to path
-    from changelist_init.input import validate_input
-    from changelist_init import initialize_file_changes, merge_file_changes
-    #
-    input_data = validate_input(argv[1:])
-    cl = input_data.storage.get_changelists()
-    if merge_file_changes(cl, initialize_file_changes(input_data)):
-        # Successful Merge
-        input_data.storage.update_changelists(cl)
-        input_data.storage.write_to_storage()
-    else:
-        exit("Failed to Merge File Changes into Changelists")
+def main(): # Have to import after appending parent dir to path
+    import changelist_init
+    input_data = changelist_init.input.validate_input(argv[1:])
+    # Generate FileChange info from git, update ChangelistDataStorage object.
+    if not changelist_init.init_storage(
+        storage=input_data.storage,
+        include_untracked=input_data.include_untracked,
+    ):
+        exit("Failed to Merge new FileChanges into Changelists.")
+    # Write Changelist Data file
+    if not input_data.storage.write_to_storage():
+        exit("Failed to Write Changelist Data File!")
 
 
 if __name__ == "__main__":
