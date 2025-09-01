@@ -18,7 +18,7 @@ setup(
 	license='GPLv3',
     packages=find_packages(exclude=['test', 'test.*']),
     install_requires=[
-        'changelist-data >= 0.2.3, < 0.3',
+        'changelist-data >= 0.2.4, < 0.3',
     ],
     entry_points={
         'console_scripts': [
