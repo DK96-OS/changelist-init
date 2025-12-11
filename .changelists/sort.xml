@@ -12,6 +12,11 @@
         <files path_start="changelist_init/" />
         <files file_ext="py" />
     </changelist>
+    <changelist name="Test Fixtures &amp; Data Providers" module="module">
+        <files filename_prefix="conftest" />
+        <files first_dir="test" />
+        <files file_ext="py" />
+    </changelist>
     <changelist name="Test Main Package">
         <files path_end="changelist_init" />
         <files path_start="test/changelist_init" />

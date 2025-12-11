@@ -1,12 +1,13 @@
 #!/usr/bin/python
-from sys import argv, path
 
 
 def main(): # Have to import after appending parent dir to path
-    import changelist_init
-    input_data = changelist_init.input.validate_input(argv[1:])
+    from sys import argv
+    from changelist_init.input import validate_input
+    input_data = validate_input(argv[1:])
     # Generate FileChange info from git, update ChangelistDataStorage object.
-    if not changelist_init.init_storage(
+    from changelist_init import init_storage
+    if not init_storage(
         storage=input_data.storage,
         include_untracked=input_data.include_untracked,
     ):
@@ -18,6 +19,7 @@ def main(): # Have to import after appending parent dir to path
 
 if __name__ == "__main__":
     from pathlib import Path
+    from sys import path
     # Get the directory of the current file (__file__ is the path to the script being executed)
     current_directory = Path(__file__).resolve().parent.parent
     # Add the directory to sys.path
