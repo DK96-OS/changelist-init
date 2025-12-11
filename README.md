@@ -1,6 +1,11 @@
 # Changelist-Init
 Manage your Git File and Commit Message Workflows with Changelists!
 
+### Requirements
+- Python 3.10 or higher.
+- pip (or similar package manager).
+- cli or bash capabilities.
+
 ## Introduction
 Changelist-Init is the package that gets your changelists ready to go!
 - Sync changelists with **git**.
