@@ -9,18 +9,6 @@ import pytest
 
 
 @pytest.fixture
-def temp_cwd():
-    """ Creates a Temporary Working Directory for Git subprocesses.
-    """
-    tdir = tempfile.TemporaryDirectory()
-    initial_cwd = os.getcwd()
-    os.chdir(tdir.name)
-    yield tdir
-    os.chdir(initial_cwd)
-    tdir.cleanup()
-
-
-@pytest.fixture
 def single_untracked_repo():
     """ A Git Repo, based on temp_cwd fixture, containing a single untracked file.
     """

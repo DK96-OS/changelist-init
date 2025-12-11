@@ -1,5 +1,7 @@
 """ Test Data Provider
 """
+import tempfile
+from os import getcwd, chdir
 from typing import Callable
 from unittest.mock import Mock
 
@@ -278,3 +280,15 @@ AM test/changelist_init/test_init.py
 ?? .idea/
 ?? external/
 """
+
+
+@pytest.fixture
+def temp_cwd():
+    """ Creates a Temporary Working Directory for subprocesses.
+    """
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = getcwd()
+    chdir(tdir.name)
+    yield tdir
+    chdir(initial_cwd)
+    tdir.cleanup()
