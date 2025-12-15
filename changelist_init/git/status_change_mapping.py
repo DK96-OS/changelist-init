@@ -6,7 +6,7 @@ from typing import Callable, Iterable, Generator
 from changelist_data import file_change
 from changelist_data.file_change import FileChange
 
-from changelist_init.git.git_file_status import GitFileStatus
+from changelist_init.git.git_status_lists import GitFileStatus
 
 
 def map_file_status_to_changes(

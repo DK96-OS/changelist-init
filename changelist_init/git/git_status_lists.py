@@ -4,53 +4,70 @@
     2. Unstaged
     3. Untracked
     These three groups are stored in three lists in this data class.
+
+**GitFileStatus NamedTuple Fields:**
+ - code (str): The two character code describing the git file status.
+ - file_path (str): The String path of the file, relative to repo directory.
+
+**GitStatusLists NamedTuple Fields:**
+ - untracked (list):
+ - unstaged (list):
+ - staged (list):
+ - partial_stage (list):
 """
-from dataclasses import dataclass, field
+from collections import namedtuple
 from typing import Generator
 
-from changelist_init.git.git_file_status import GitFileStatus
-from changelist_init.git.git_tracking_status import GitTrackingStatus
+from changelist_init.git.git_tracking_status import GitTrackingStatus, from_str
 
 
-@dataclass(frozen=True)
-class GitStatusLists:
-    """ The Lists summarizing the current Git Status.
+GitFileStatus = namedtuple(
+    'GitFileStatus',
+    'code file_path',
+)
+
+
+GitStatusLists = namedtuple(
+    'GitStatusLists',
+    'untracked unstaged staged partial_stage',
+)
+
+
+def get_list(
+    self: GitStatusLists,
+    tracking_status: GitTrackingStatus,
+) -> list[GitFileStatus]:
+    """ Obtain a List of File Status objects with the given Tracking Status.
     """
-    _lists: dict[GitTrackingStatus, list[GitFileStatus]] = field(default_factory=lambda: {})
+    match tracking_status:
+        case GitTrackingStatus.UNSTAGED:
+            return self.unstaged
+        case GitTrackingStatus.STAGED:
+            return self.staged
+        case GitTrackingStatus.PARTIAL_STAGE:
+            return self.partial_stage
+    # Default: GitTrackingStatus.UNTRACKED
+    return self.untracked
 
-    def get_list(
-        self, tracking_status: GitTrackingStatus
-    ) -> list[GitFileStatus] | None:
-        """ Obtain a List of File Status objects with the given Tracking Status.
-        """
-        return self._lists.get(tracking_status)
 
-    def add_file_status(
-        self, file_status: GitFileStatus | None,
-    ) -> bool:
-        """ Add A File Status to the Lists.
-        """
-        status = file_status.get_tracking_status()
-        if (initial_list := self.get_list(status)) is not None:
-            initial_list.append(file_status)
-            return True
-        self._lists[status] = [file_status]
-        return True
+def add_file_status(
+    self: GitStatusLists,
+    file_status: GitFileStatus,
+) -> bool:
+    """ Add A File Status to the Lists.
+    """
+    get_list(self, from_str(file_status.code)).append(file_status)
+    return True
 
-    def merge_tracked(self) -> Generator[GitFileStatus, None, None]:
-        """ Combine the Tracked Lists.
-        These are currently divided into 3 categories: Staged, Unstaged, and PartialStage
-        """
-        tracked_status = (GitTrackingStatus.STAGED, GitTrackingStatus.UNSTAGED, GitTrackingStatus.PARTIAL_STAGE)
-        for e in tracked_status:
-            if (tracked_list := self.get_list(e)) is not None:
-                yield from tracked_list
 
-    def merge_all(self) -> Generator[GitFileStatus, None, None]:
-        """ Combine the Tracked Lists.
-        These are currently divided into 3 categories: Staged, Unstaged, and PartialStage
-        """
-        for e in GitTrackingStatus:
-            if (file_list := self.get_list(e)) is not None:
-                for f in file_list:
-                    yield f
+def merge_all(
+    self: GitStatusLists,
+    include_untracked: bool = True,
+) -> Generator[GitFileStatus, None, None]:
+    """ Combine all List contents into the Generator output, in this order: staged, partial, unstaged, untracked.
+    """
+    yield from self.staged
+    yield from self.partial_stage
+    yield from self.unstaged
+    if include_untracked:
+        yield from self.untracked
