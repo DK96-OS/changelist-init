@@ -28,7 +28,8 @@ def _sample_fc_n(n: int = 1) -> str:
 
 def get_default_cl(changes: list[FileChange] | None = None):
     return Changelist(
-        id="12345678", name="Initial Changelist",
+        id="12345678",
+        name="Initial Changelist",
         changes=changes if changes is not None else [],
         is_default=True,
     )
@@ -36,15 +37,17 @@ def get_default_cl(changes: list[FileChange] | None = None):
 
 def get_root_cl(changes: list[FileChange] | None = None):
     return Changelist(
-        id="12", name="Project Root",
-        changes=changes if changes is not None else []
+        id="12",
+        name="Project Root",
+        changes=changes if changes is not None else [],
     )
 
 
 def get_test_cl(changes: list[FileChange] | None = None):
     return Changelist(
-        id="2124", name="Test",
-        changes=changes if changes is not None else []
+        id="2124",
+        name="Test",
+        changes=changes if changes is not None else [],
     )
 
 

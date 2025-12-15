@@ -136,6 +136,8 @@ def single_staged_delete_repo():
 
 @pytest.fixture
 def single_unstaged_plus_multi_files_in_new_dir_repo():
+    """ Files are created with short string contents. No git add or commits.
+    """
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
     os.chdir(tdir.name)
