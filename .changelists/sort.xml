@@ -50,7 +50,7 @@
     <changelist key="hidden_files" name="Hidden Files In Hidden Directories" module="hidden">
         <files filename_prefix="."/>
     </changelist>
-    <changelist key="root" name="Requirements" module="root">
+    <changelist name="Requirements" module="root">
         <files filename_suffix="requirements"/>
         <files file_ext="txt"/>
     </changelist>
