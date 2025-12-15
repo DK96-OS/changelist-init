@@ -41,7 +41,7 @@ jobs:
 
       - name: Upload Test Coverage Reports
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: changelist-init-cov-${{ matrix.os }}-${{ matrix.python-version }}
           path: htmlcov/
