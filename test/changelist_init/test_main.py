@@ -15,12 +15,15 @@ INITIAL_EMPTY_FILE_SIZE = 172
 
 
 def test_main_not_repo_raises_exit(temp_cwd):
+    sys.argv = ['changelist-init']
     with pytest.raises(SystemExit, match='Git Status Runner Error:'):
         main()
 
 
 def test_main_no_cl_data_file_creates_new_empty_changelists_data_file(temp_cwd):
+    sys.argv = ['git', 'init',]
     subprocess.run(['git', 'init'], capture_output=True)
+    sys.argv = ['changelist-init']
     main()
     assert (cl_data_file := Path(CHANGELISTS_FILE_PATH_STR)).exists()
     file_contents = cl_data_file.read_text()
@@ -31,6 +34,7 @@ def test_main_single_untracked_repo_ignores_untracked_file(
     single_untracked_repo,
     git_status_line_untracked_setup
 ):
+    sys.argv = ['changelist-init']
     main()
     assert (cl_data_file := Path(CHANGELISTS_FILE_PATH_STR)).exists()
     file_contents = cl_data_file.read_text()
@@ -41,7 +45,7 @@ def test_main_untracked_arg_single_untracked_repo_includes_untracked_file(
     single_untracked_repo,
     git_status_line_untracked_setup
 ):
-    sys.argv.append('-u')
+    sys.argv = ['changelist-init', '-u']
     main()
     assert (cl_data_file := Path(CHANGELISTS_FILE_PATH_STR)).exists()
     file_contents = cl_data_file.read_text()
