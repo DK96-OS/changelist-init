@@ -16,6 +16,22 @@ def test_create_fc_to_cl_dict_empty_list_returns_empty_dict():
 def test_create_fc_to_cl_dict_():
     result = create_fc_to_cl_dict(cl_sample_list(['c', ' ', ' ']))
     assert len(result.keys()) == 1
+    cl: Changelist = result[get_sample_fc_path(0)]
+    assert len(cl.changes) == 1
+
+
+def test_create_fc_to_cl_dict_create_sample_fc_3():
+    result = create_fc_to_cl_dict(cl_sample_list(['c', ' c', '  c']))
+    assert len(result.keys()) == 3
+    #
+    cl0: Changelist = result[get_sample_fc_path(0)]
+    assert len(cl0.changes) == 1
+    #
+    cl1: Changelist = result[get_sample_fc_path(1)]
+    assert len(cl1.changes) == 1
+    #
+    cl2: Changelist = result[get_sample_fc_path(2)]
+    assert len(cl2.changes) == 1
 
 
 @pytest.mark.parametrize(
@@ -38,7 +54,7 @@ def test_offer_fc_to_cl_dict_scenario_0():
     assert not offer_fc_to_cl_dict({}, file_change.create_fc(get_sample_fc_path(0)))
 
 
-def test_offer_fc_to_cl_dict__empty_fc_raises_exit():
+def test_offer_fc_to_cl_dict_empty_fc_raises_exit():
     with pytest.raises(SystemExit):
         offer_fc_to_cl_dict({}, file_change.FileChange())
 
@@ -54,7 +70,16 @@ def test_offer_fc_to_cl_dict_create_sample_fc_0():
 
 
 def test_offer_fc_to_cl_dict_create_sample_fc_3():
-    test_map = create_fc_to_cl_dict(cl_sample_list(['c', ' c', '  c']))
+    test_changelists = cl_sample_list(['c', ' c', '  c'])
+    test_map = create_fc_to_cl_dict(test_changelists)
+    # The Changelists should be cleared before offer method.
+    for cl in test_changelists:
+        cl.changes.clear()
+    # The map contains empty changelists
+    for i in range(3):
+        cl: Changelist = test_map[get_sample_fc_path(i)]
+        assert len(cl.changes) == 0
+    # Offer FC adds to Changelists
     for i in range(3):
         assert offer_fc_to_cl_dict(test_map, create_fc(get_sample_fc_path(i)))
         assert get_sample_fc_path(i) in test_map
