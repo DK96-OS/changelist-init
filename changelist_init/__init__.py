@@ -1,4 +1,5 @@
 """ Changelist Init Package.
+ - Provides a Default Initial Changelist.
 """
 from typing import Iterable
 
@@ -10,7 +11,7 @@ from changelist_init import git, fc_to_cl_map
 from changelist_init.input.input_data import InputData
 
 
-_DEFAULT_CHANGELIST_ID = '12345678'
+_DEFAULT_CHANGELIST_ID = '4a74640f-90b3-86a1-ab28-af29299c84fd'
 _DEFAULT_CHANGELIST_NAME = "Initial Changelist"
 
 
@@ -20,18 +21,17 @@ def process_cl_init(input_data: InputData):
 **Parameters:**
  - input_data (InputData): The Changelist Init input data.
     """
-    if not init_storage(
+    init_storage(
         storage=input_data.storage,
         include_untracked=input_data.include_untracked,
-    ):
-        exit("Failed to Merge new FileChanges into Changelists.")
+    )
     _write_storage(input_data.storage)
 
 
 def merge_file_changes(
     existing_lists: list[Changelist],
     files: Iterable[FileChange],
-) -> bool:
+):
     """ Merge FileChange into Changelists.
  - Leaves existing files in their Changelists.
  - Inserts all new files into the default Changelist.
@@ -39,10 +39,7 @@ def merge_file_changes(
 
 **Parameters:**
  - existing_lists (list[Changelist]): The list of Changelists that the InputData is starting with.
- - files (list[FileChange]): The new FileChanges that have been obtained from Git.
-
-**Returns:**
- bool - True after the operation has finished.
+ - files (Iterable[FileChange]): The new FileChanges that have been obtained from Git.
     """
     if (default_cl := get_default_cl(existing_lists)) is not None:
         default_cl.changes.extend(
@@ -61,13 +58,12 @@ def merge_file_changes(
                 is_default=True,
             )
         )
-    return True
 
 
 def init_storage(
     storage: ChangelistDataStorage,
     include_untracked: bool,
-) -> bool:
+):
     """ Get New FileChange Information, Merge into Changelists Data.
 
 **Parameters:*
@@ -77,13 +73,11 @@ def init_storage(
 **Returns:**
  bool - True if the initialized data merged into Changelists Storage object successfully.
     """
-    if not merge_file_changes(
+    merge_file_changes(
         cl := storage.get_changelists(),
         git.generate_file_changes(include_untracked)
-    ):
-        return False
+    )
     storage.update_changelists(cl)
-    return True
 
 
 def _write_storage(storage: ChangelistDataStorage) -> bool:
