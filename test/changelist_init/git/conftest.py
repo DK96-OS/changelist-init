@@ -9,25 +9,6 @@ import pytest
 
 
 @pytest.fixture
-def single_untracked_repo():
-    """ A Git Repo, based on temp_cwd fixture, containing a single untracked file.
-    """
-    tdir = tempfile.TemporaryDirectory()
-    initial_cwd = os.getcwd()
-    os.chdir(tdir.name)
-    subprocess.run(['git', 'init'], capture_output=True,)
-    # Setup Files
-    setup_file = Path(tdir.name + "/setup.py")
-    setup_file.touch()
-    setup_file.write_text("Hellow")
-    # Ready For Test Case
-    yield tdir
-    # After
-    os.chdir(initial_cwd)
-    tdir.cleanup()
-
-
-@pytest.fixture
 def single_unstaged_modify_repo():
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
