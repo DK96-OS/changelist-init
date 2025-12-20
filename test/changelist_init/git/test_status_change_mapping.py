@@ -50,3 +50,19 @@ def test_get_status_code_change_map_delete_inputs_returns_delete_fc(status_code)
 )
 def test_get_status_code_change_map_untracked_inputs_returns_create_fc(status_code):
     assert file_change.create_fc == get_status_code_change_map(status_code)
+
+
+@pytest.mark.parametrize(
+    'status_code', [
+        'C ',  # Copied
+        ' C',
+        'R ',  # Renamed
+        ' R',
+        'T ',  # File Type
+        ' T',
+        'U ',  # Unmerged
+        ' U',
+    ]
+)
+def test_get_status_code_change_map_unsupported_codes_returns_none(status_code):
+    assert get_status_code_change_map(status_code) is None
