@@ -14,14 +14,20 @@ def test_create_fc_to_cl_dict_empty_list_returns_empty_dict():
 
 
 def test_create_fc_to_cl_dict_():
-    result = create_fc_to_cl_dict(cl_sample_list(['c', ' ', ' ']))
+    result = create_fc_to_cl_dict(cl_sample_list([
+        'c', '', '',
+    ]))
     assert len(result.keys()) == 1
     cl: Changelist = result[get_sample_fc_path(0)]
     assert len(cl.changes) == 1
 
 
 def test_create_fc_to_cl_dict_create_sample_fc_3():
-    result = create_fc_to_cl_dict(cl_sample_list(['c', ' c', '  c']))
+    result = create_fc_to_cl_dict(cl_sample_list([
+        'c',
+        ' c',
+        '  c',
+    ]))
     assert len(result.keys()) == 3
     #
     cl0: Changelist = result[get_sample_fc_path(0)]
@@ -70,7 +76,11 @@ def test_offer_fc_to_cl_dict_create_sample_fc_0():
 
 
 def test_offer_fc_to_cl_dict_create_sample_fc_3():
-    test_changelists = cl_sample_list(['c', ' c', '  c'])
+    test_changelists = cl_sample_list([
+        'c',
+        ' c',
+        '  c',
+    ])
     test_map = create_fc_to_cl_dict(test_changelists)
     # The Changelists should be cleared before offer method.
     for cl in test_changelists:
