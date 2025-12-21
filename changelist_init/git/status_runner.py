@@ -14,7 +14,7 @@ def run_git_status(
 **Returns:**
  str - The output of the Git Status Operation.
     """
-    args = ['git', '--no-optional-locks', 'status', '--porcelain']
+    args = ['git', '--no-optional-locks', 'status', '--porcelain', '--no-renames']
     if include_untracked:
         args.append('-uall')
     else:
