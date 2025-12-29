@@ -69,9 +69,11 @@ def _define_arguments() -> ArgumentParser:
  argparse.ArgumentParser - An instance with all supported Arguments.
     """
     parser = ArgumentParser(
-        description="Initializes and updates the Changelist data storage file with git status information.",
+        description='Initializes and updates the Changelist data storage file with git status information.',
     )
+    # Introduced in Version 3.14: Color, SuggestOnError.
     parser.color = True
+    parser.suggest_on_error = True
     # Optional Arguments
     parser.add_argument(
         '--changelists_file',
@@ -86,7 +88,7 @@ def _define_arguments() -> ArgumentParser:
         help='The Path to the Workspace Data File. Searches default paths if none.',
     )
     parser.add_argument(
-        "--include_untracked", "-u",
+        '--include_untracked', '-u',
         action='store_true',
         default=False,
         help='The option to include untracked files in changelists.',
