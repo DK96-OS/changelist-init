@@ -4,16 +4,16 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name="changelist-init",
-    version="0.3",
+    name='changelist-init',
+    version='0.3',
 	author='DK96-OS',
 	description='Initialize and update Changelists information.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://github.com/DK96-OS/changelist-init/",
+    url='https://github.com/DK96-OS/changelist-init/',
     project_urls={
-        "Issues": "https://github.com/DK96-OS/changelist-init/issues",
-        "Source Code": "https://github.com/DK96-OS/changelist-init/"
+        'Issues': 'https://github.com/DK96-OS/changelist-init/issues',
+        'Source Code': 'https://github.com/DK96-OS/changelist-init/'
     },
 	license='GPLv3',
     packages=find_packages(exclude=['test', 'test.*']),
