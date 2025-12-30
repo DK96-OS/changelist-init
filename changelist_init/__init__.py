@@ -1,5 +1,5 @@
-""" Changelist Init Package.
- - Provides a Default Initial Changelist.
+""" CL-INIT Main Package Methods.
+ Author: DK96-OS 2024 - 2025
 """
 from typing import Iterable
 
