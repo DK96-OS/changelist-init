@@ -54,14 +54,30 @@ def test_get_status_code_change_map_untracked_inputs_returns_create_fc(status_co
 
 @pytest.mark.parametrize(
     'status_code', [
+        'T ',
+        ' T',
+    ]
+)
+def test_get_status_code_change_map_file_type_codes_returns_update_fc(status_code):
+    assert file_change.update_fc == get_status_code_change_map(status_code)
+
+
+@pytest.mark.parametrize(
+    'status_code', [
+        'U ',
+        ' U',
+    ]
+)
+def test_get_status_code_change_map_unmerged_codes_returns_update_fc(status_code):
+    assert file_change.update_fc == get_status_code_change_map(status_code)
+
+
+@pytest.mark.parametrize(
+    'status_code', [
         'C ',  # Copied
         ' C',
         'R ',  # Renamed
         ' R',
-        'T ',  # File Type
-        ' T',
-        'U ',  # Unmerged
-        ' U',
     ]
 )
 def test_get_status_code_change_map_unsupported_codes_returns_none(status_code):
