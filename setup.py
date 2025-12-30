@@ -28,7 +28,7 @@ setup(
         ],
     },
     python_requires='>=3.10',
-    keywords=['changelist', 'git', 'vcs'],
+    keywords=['vcs', 'foci', 'changelist', 'git'],
     classifiers=[
         'Natural Language :: English',
         'Operating System :: OS Independent',
