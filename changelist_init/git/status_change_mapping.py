@@ -34,6 +34,7 @@ def get_status_code_change_map(
     code: str,
 ) -> Callable[[str, ], FileChange] | None:
     """ Get a FileChange mapping callable for a specific code.
+ - (C)opied and (R)enamed are disabled in git status --no-renames.
 
 **Parameters:**
  - code (str): The status code, determining what kind of FileChange (create, modify, delete)
@@ -41,14 +42,12 @@ def get_status_code_change_map(
 **Returns:**
  Callable[str, FileChange]? - A function that maps a FileChange path into the FileChange object. None if the code is unrecognized.
     """
-    if code in ('M ', ' M', 'MM'):
-        return file_change.update_fc
-    if code in ('A ', ' A', 'AM', 'MA'):
+    if '?' in code or 'A' in code or '!' in code:
         return file_change.create_fc
-    if code in ('D ', ' D', 'MD', 'DM'):
+    if 'D' in code:
         return file_change.delete_fc
-    if '?' in code or '!' in code:
-        return file_change.create_fc
+    if 'M' in code or 'U' in code or 'T' in code:
+        return file_change.update_fc
     return None
 
 
