@@ -1,8 +1,9 @@
-""" Changelist Init Package.
+""" CL-INIT Main Package Methods.
+ Author: DK96-OS 2024 - 2025
 """
 from typing import Iterable
 
-from changelist_data import ChangelistDataStorage
+from changelist_data import ChangelistDataStorage, StorageType
 from changelist_data.changelist import Changelist, get_default_cl
 from changelist_data.file_change import FileChange
 
@@ -10,29 +11,27 @@ from changelist_init import git, fc_to_cl_map
 from changelist_init.input.input_data import InputData
 
 
-_DEFAULT_CHANGELIST_ID = '12345678'
+_DEFAULT_CHANGELIST_ID = '4a74640f-90b3-86a1-ab28-af29299c84fd'
 _DEFAULT_CHANGELIST_NAME = "Initial Changelist"
 
 
-def initialize_file_changes(
-    input_data: InputData,
-) -> list[FileChange]:
-    """ Get up-to-date File Change information in a list.
- - Initializing Changelists begins by requesting File Information from Git.
+def process_cl_init(input_data: InputData):
+    """ The Changelist Init Process.
 
 **Parameters:**
- - input_data (InputData): ChangelistInit Input Package Data object, containing program input.
-
-**Returns:**
- list[FileChange] - The List of File Changes, freshly squeezed from git.
+ - input_data (InputData): The Changelist Init input data.
     """
-    return list(git.generate_file_changes(input_data.include_untracked))
+    init_storage(
+        storage=input_data.storage,
+        include_untracked=input_data.include_untracked,
+    )
+    _write_storage(input_data.storage)
 
 
 def merge_file_changes(
     existing_lists: list[Changelist],
     files: Iterable[FileChange],
-) -> bool:
+):
     """ Merge FileChange into Changelists.
  - Leaves existing files in their Changelists.
  - Inserts all new files into the default Changelist.
@@ -40,10 +39,7 @@ def merge_file_changes(
 
 **Parameters:**
  - existing_lists (list[Changelist]): The list of Changelists that the InputData is starting with.
- - files (list[FileChange]): The new FileChanges that have been obtained from Git.
-
-**Returns:**
- bool - True after the operation has finished.
+ - files (Iterable[FileChange]): The new FileChanges that have been obtained from Git.
     """
     if (default_cl := get_default_cl(existing_lists)) is not None:
         default_cl.changes.extend(
@@ -53,19 +49,21 @@ def merge_file_changes(
             )
         )
     else:
-        existing_lists.append(Changelist(
-            id=_DEFAULT_CHANGELIST_ID,
-            name=_DEFAULT_CHANGELIST_NAME,
-            changes=files if isinstance(files, list) else list(files),
-            is_default=True,
-        ))
-    return True
+        existing_lists.append(
+            Changelist(
+                id=_DEFAULT_CHANGELIST_ID,
+                name=_DEFAULT_CHANGELIST_NAME,
+                changes=files if isinstance(files, list) else list(files),
+                comment='',
+                is_default=True,
+            )
+        )
 
 
 def init_storage(
     storage: ChangelistDataStorage,
     include_untracked: bool,
-) -> bool:
+):
     """ Get New FileChange Information, Merge into Changelists Data.
 
 **Parameters:*
@@ -75,10 +73,17 @@ def init_storage(
 **Returns:**
  bool - True if the initialized data merged into Changelists Storage object successfully.
     """
-    if not merge_file_changes(
+    merge_file_changes(
         cl := storage.get_changelists(),
         git.generate_file_changes(include_untracked)
-    ):
-        return False
+    )
     storage.update_changelists(cl)
-    return True # Successful Merge
+
+
+def _write_storage(storage: ChangelistDataStorage) -> bool:
+    if not storage.write_to_storage(): # Write Changelist Data file
+        if storage.storage_type == StorageType.CHANGELISTS:
+            exit("Failed to Write Changelist Data File!")
+        elif storage.storage_type == StorageType.WORKSPACE:
+            exit("Failed to Write Workspace Data File!")
+    return True

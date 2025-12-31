@@ -11,13 +11,13 @@ from test.changelist_init.conftest import get_cl, fc_sample_list, get_fc_status,
     create_sample_list_input
 
 
-def test_merge_file_changes_empty_lists_returns_true():
-    assert merge_file_changes([], [])
+def test_merge_file_changes_empty_lists_returns_none():
+    merge_file_changes([], [])
 
 
 def test_merge_file_changes_empty_existing_list_returns_true():
     existing_list = []
-    assert merge_file_changes(
+    merge_file_changes(
         existing_list,
         [FileChange(after_path='hello.py', after_dir=False)]
     )
@@ -26,7 +26,7 @@ def test_merge_file_changes_empty_existing_list_returns_true():
 
 def test_merge_file_changes_empty_files_returns_true():
     existing_list = [Changelist('id', 'name', [])]
-    assert merge_file_changes(
+    merge_file_changes(
         existing_list,
         []
     )
@@ -41,7 +41,7 @@ def test_merge_file_changes_empty_files_returns_true():
     ) for f_n in range(5) for cl_n in range(3) for fc_status_n in range(3)
 ])
 def test_single_cl_containing_single_fc_merge_empty_returns_empty_cl(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -53,7 +53,7 @@ def test_single_cl_containing_single_fc_merge_empty_returns_empty_cl(existing_cl
     ) for cl_n in range(3) for fc_status_n in range(3)
 ])
 def test_single_cl_containing_multiple_fc_merge_empty_returns_empty_cl(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -73,7 +73,7 @@ def test_single_cl_containing_multiple_fc_merge_empty_returns_empty_cl(existing_
     ) for fc_status_n in range(3)
 ])
 def test_multi_cl_containing_single_unique_fc_merge_empty_returns_empty_cls(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -93,7 +93,7 @@ def test_multi_cl_containing_single_unique_fc_merge_empty_returns_empty_cls(exis
     ) for cl_n in range(3) for fc_status_n in range(3)
 ])
 def test_multi_cl_containing_single_same_fc_merge_empty_returns_empty_cls(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -105,7 +105,7 @@ def test_multi_cl_containing_single_same_fc_merge_empty_returns_empty_cls(existi
     ) for cl_n in range(3) for fc_status_n in range(3) for fc_status_i in range(3)
 ])
 def test_single_cl_containing_single_fc_merge_single_unique_fc_returns_cl_new_fc(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -117,7 +117,7 @@ def test_single_cl_containing_single_fc_merge_single_unique_fc_returns_cl_new_fc
     ) for cl_n in range(3) for fc_status_n in range(3) for fc_status_i in range(3)
 ])
 def test_single_cl_containing_three_fc_merge_single_unique_fc_returns_cl_new_fc(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -129,7 +129,7 @@ def test_single_cl_containing_three_fc_merge_single_unique_fc_returns_cl_new_fc(
     ) for cl_n in range(3) for fc_status_n in range(3) for fc_status_i in range(3)
 ])
 def test_single_cl_containing_three_fc_merge_single_existing_fc_returns_single_cl_single_fc(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -141,7 +141,7 @@ def test_single_cl_containing_three_fc_merge_single_existing_fc_returns_single_c
     ) for cl_n in range(3) for fc_status_n in range(3) for fc_status_i in range(3)
 ])
 def test_single_cl_containing_three_fc_merge_all_existing_fc_returns_single_cl_all_fc(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -153,7 +153,7 @@ def test_single_cl_containing_three_fc_merge_all_existing_fc_returns_single_cl_a
     ) for cl_n in range(3) for fc_status_n in range(3) for fc_status_i in range(3)
 ])
 def test_multi_cl_containing_three_fc_merge_all_existing_fc_returns_unchanged(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl
 
 
@@ -165,5 +165,5 @@ def test_multi_cl_containing_three_fc_merge_all_existing_fc_returns_unchanged(ex
     ) for cl_n in range(3) for fc_status_n in range(3) for fc_status_i in range(3)
 ])
 def test_multi_cl_containing_three_fc_merge_two_new_fc_returns_multi_cl_two_fc_in_first_cl(existing_cl, files, expected_cl):
-    assert merge_file_changes(existing_cl, files)
+    merge_file_changes(existing_cl, files)
     assert existing_cl == expected_cl

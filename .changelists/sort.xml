@@ -12,6 +12,11 @@
         <files path_start="changelist_init/" />
         <files file_ext="py" />
     </changelist>
+    <changelist name="Test Fixtures &amp; Data Providers" module="module">
+        <files filename_prefix="conftest" />
+        <files first_dir="test" />
+        <files file_ext="py" />
+    </changelist>
     <changelist name="Test Main Package">
         <files path_end="changelist_init" />
         <files path_start="test/changelist_init" />
@@ -29,27 +34,28 @@
         <files path_start="test/" />
         <files file_ext="py" />
     </changelist>
-    <changelist key="github_workflows" name="GitHub Workflows" module="hidden">
-        <files first_dir=".github"/>
-        <files path_end="workflows"/>
+    <changelist name="GitHub Workflows" module="hidden">
+        <files path_start=".github/workflows" />
         <files file_ext="yml"/>
     </changelist>
-    <changelist key="github_dependabot" name="GitHub Dependabot" module="hidden">
+    <changelist name="GitHub Dependabot" module="hidden">
         <files first_dir=".github"/>
         <files filename_prefix="dependabot"/>
         <files file_ext="yml"/>
     </changelist>
-    <changelist key="root_python" name="Root Project Python Files" module="root">
+    <changelist name="Documentation">
+        <files file_ext="md"/>
+    </changelist>
+    <changelist name="Requirements" module="root">
+        <files filename_prefix="require"/>
+    </changelist>
+    <changelist name="Root Project Python Files" module="root">
         <files file_ext="py"/>
     </changelist>
-    <changelist key="hidden_files" name="Hidden Files In Hidden Directories" module="hidden">
+    <changelist name="Hidden Files In Hidden Directories" module="hidden">
         <files filename_prefix="."/>
     </changelist>
-    <changelist key="root" name="Requirements" module="root">
-        <files filename_suffix="requirements"/>
-        <files file_ext="txt"/>
-    </changelist>
-    <changelist key="root" name="Hidden Root Project Files" module="root">
+    <changelist name="Hidden Root Project Files" module="root">
         <files filename_prefix="."/>
     </changelist>
 </sorting>

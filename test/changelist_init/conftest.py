@@ -1,5 +1,10 @@
 """ Test Data Provider
 """
+import os
+import subprocess
+import tempfile
+from os import getcwd, chdir
+from pathlib import Path
 from typing import Callable
 from unittest.mock import Mock
 
@@ -17,7 +22,7 @@ FC_PATH_REQUIREMENTS = '/requirements.txt'
 
 _SAMPLE_FC_0 = FC_PATH_SETUP
 _SAMPLE_FC_1 = "/test/__init__.py"
-_SAMPLE_FC_2 = "/test/test_method_initialize_file_changes.py"
+_SAMPLE_FC_2 = "/test/test_method_generate_file_changes.py"
 
 
 def _sample_fc_n(n: int = 1) -> str:
@@ -26,7 +31,8 @@ def _sample_fc_n(n: int = 1) -> str:
 
 def get_default_cl(changes: list[FileChange] | None = None):
     return Changelist(
-        id="12345678", name="Initial Changelist",
+        id="12345678",
+        name="Initial Changelist",
         changes=changes if changes is not None else [],
         is_default=True,
     )
@@ -34,15 +40,17 @@ def get_default_cl(changes: list[FileChange] | None = None):
 
 def get_root_cl(changes: list[FileChange] | None = None):
     return Changelist(
-        id="12", name="Project Root",
-        changes=changes if changes is not None else []
+        id="12",
+        name="Project Root",
+        changes=changes if changes is not None else [],
     )
 
 
 def get_test_cl(changes: list[FileChange] | None = None):
     return Changelist(
-        id="2124", name="Test",
-        changes=changes if changes is not None else []
+        id="2124",
+        name="Test",
+        changes=changes if changes is not None else [],
     )
 
 
@@ -278,3 +286,170 @@ AM test/changelist_init/test_init.py
 ?? .idea/
 ?? external/
 """
+
+
+@pytest.fixture
+def temp_cwd():
+    """ Creates a Temporary Working Directory for subprocesses.
+    """
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = getcwd()
+    chdir(tdir.name)
+    yield tdir
+    chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
+def single_untracked_repo():
+    """ A Git Repo, based on temp_cwd fixture, containing a single untracked file.
+    """
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = os.getcwd()
+    os.chdir(tdir.name)
+    subprocess.run(['git', 'init'], capture_output=True,)
+    # Setup Files
+    setup_file = Path(tdir.name + "/setup.py")
+    setup_file.touch()
+    setup_file.write_text("Hellow")
+    # Ready For Test Case
+    yield tdir
+    # After
+    os.chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
+def single_unstaged_modify_repo():
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = os.getcwd()
+    os.chdir(tdir.name)
+    subprocess.run(['git', 'init'], capture_output=True,)
+    # Setup Files
+    setup_file = Path(tdir.name + "/setup.py")
+    setup_file.touch()
+    setup_file.write_text("Hellow")
+    # Setup Git Config
+    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
+    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
+    # Commit
+    subprocess.run(['git', 'add', 'setup.py'],
+        capture_output=True,)
+    subprocess.run(['git', 'commit', '-m', '"Init!"'],
+        capture_output=True,)
+    # Modify
+    setup_file.write_text("Hello World!")
+    # Ready For Test Case
+    yield tdir
+    # After
+    os.chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
+def single_staged_modify_repo():
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = os.getcwd()
+    os.chdir(tdir.name)
+    subprocess.run(['git', 'init'], capture_output=True,)
+    # Setup Files
+    setup_file = Path(tdir.name + "/setup.py")
+    setup_file.touch()
+    setup_file.write_text("Hellow")
+    # Setup Git Config
+    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
+    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
+    # Commit
+    subprocess.run(['git', 'add', 'setup.py'])
+    subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
+    # Modify
+    setup_file.write_text("Hello World!")
+    # Stage
+    subprocess.run(['git', 'add', 'setup.py'])
+    # Ready For Test Case
+    yield tdir
+    # After
+    os.chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
+def single_unstaged_delete_repo():
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = os.getcwd()
+    os.chdir(tdir.name)
+    subprocess.run(['git', 'init'], capture_output=True,)
+    # Setup Files
+    setup_file = Path(tdir.name + "/setup.py")
+    setup_file.touch()
+    setup_file.write_text("Hellow")
+    # Setup Git Config
+    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
+    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
+    # Commit
+    subprocess.run(['git', 'add', 'setup.py'])
+    subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
+    # Delete
+    setup_file.unlink()
+    # Ready For Test Case
+    yield tdir
+    # After
+    os.chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
+def single_staged_delete_repo():
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = os.getcwd()
+    os.chdir(tdir.name)
+    subprocess.run(['git', 'init'],
+        capture_output=True,)
+    # Setup Files
+    setup_file = Path(tdir.name + "/setup.py")
+    setup_file.touch()
+    setup_file.write_text("Hellow")
+    # Setup Git Config
+    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
+    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
+    # Commit
+    subprocess.run(['git', 'add', 'setup.py'])
+    subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
+    # Modify
+    setup_file.unlink()
+    # Stage
+    subprocess.run(['git', 'add', 'setup.py'])
+    # Ready For Test Case
+    yield tdir
+    # After
+    os.chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
+def single_unstaged_plus_multi_files_in_new_dir_repo():
+    """ Files are created with short string contents. No git add or commits.
+    """
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = os.getcwd()
+    os.chdir(tdir.name)
+    subprocess.run(['git', 'init'], capture_output=True,)
+    # Setup Files
+    setup_file = Path(tdir.name + "/setup.py")
+    setup_file.touch()
+    setup_file.write_text("Hellow")
+    # Create new Dir
+    new_dir = (setup_file.parent / "test")
+    new_dir.mkdir()
+    # Create Files
+    new_init_file = new_dir / "__init__.py"
+    new_init_file.touch()
+    new_init_file.write_text('"""  """')
+    new_src_file = new_dir / "source_file.py"
+    new_src_file.touch()
+    new_src_file.write_text("src")
+    # Ready For Test Case
+    yield tdir
+    # After
+    os.chdir(initial_cwd)
+    tdir.cleanup()
