@@ -1,4 +1,4 @@
-""" Input Sub-Package Methods.
+""" Input Package Method.
 """
 from changelist_data import load_storage_from_file_arguments
 

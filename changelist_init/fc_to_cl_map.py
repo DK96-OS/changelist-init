@@ -20,10 +20,7 @@ def create_fc_to_cl_dict(
     cl_map: dict[str, Changelist] = {}
     for cl in changelists:
         for fc in cl.changes:
-            if (before := fc.before_path) is not None:
-                cl_map[before] = cl
-            if (after := fc.after_path) is not None:
-                cl_map[after] = cl
+            cl_map[_get_first_path(fc)] = cl
     return cl_map
 
 
@@ -40,19 +37,20 @@ def offer_fc_to_cl_dict(
  - file (FileChange): The FC to search the dict for, and add to the Changelist if found.
 
 **Returns:**
- bool - True if the FC was added to a CL. False if there was no match with the dict.
+ bool - True if the FC was added to a CL. False if the file was not found.
     """
-    if (before := file.before_path) is not None:
-        if (cl := fc_map.get(before)) is not None:  # Match!
-            cl.changes.append(file)
-            return True
-    elif (after := file.after_path) is not None:
-        if (cl := fc_map.get(after)) is not None:  # Match!
-            cl.changes.append(file)
-            return True
-    else:
-        exit("This FC has no file path property.")
-    return False  # FC not in map
+    if (cl := fc_map.get(_get_first_path(file))) is not None:  # Match!
+        cl.changes.append(file)
+        return True
+    return False # FC not in map
+
+
+def _get_first_path(file: FileChange) -> str:
+    if file.before_path:
+        return file.before_path
+    if file.after_path:
+        return file.after_path
+    exit("A Git Reader Error may have occurred.")
 
 
 def merge_fc_generator(
