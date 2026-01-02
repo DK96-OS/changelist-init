@@ -9,10 +9,11 @@ from typing import Callable
 from unittest.mock import Mock
 
 import pytest
-from changelist_data import file_change
+from changelist_data import file_change, ChangelistDataStorage, new_tree, StorageType
 
 from changelist_data.changelist import Changelist
 from changelist_data.file_change import FileChange
+from changelist_data.storage import storage_type
 
 from changelist_init import InputData
 
@@ -307,10 +308,9 @@ def single_untracked_repo():
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
     os.chdir(tdir.name)
-    subprocess.run(['git', 'init'], capture_output=True,)
+    _init_and_config_git_repo()
     # Setup Files
-    setup_file = Path(tdir.name + "/setup.py")
-    setup_file.touch()
+    (setup_file := Path(tdir.name + "/setup.py")).touch()
     setup_file.write_text("Hellow")
     # Ready For Test Case
     yield tdir
@@ -324,19 +324,13 @@ def single_unstaged_modify_repo():
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
     os.chdir(tdir.name)
-    subprocess.run(['git', 'init'], capture_output=True,)
+    _init_and_config_git_repo()
     # Setup Files
-    setup_file = Path(tdir.name + "/setup.py")
-    setup_file.touch()
+    (setup_file := Path(tdir.name + "/setup.py")).touch()
     setup_file.write_text("Hellow")
-    # Setup Git Config
-    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
-    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
     # Commit
-    subprocess.run(['git', 'add', 'setup.py'],
-        capture_output=True,)
-    subprocess.run(['git', 'commit', '-m', '"Init!"'],
-        capture_output=True,)
+    subprocess.run(['git', 'add', 'setup.py'], capture_output=True)
+    subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
     # Modify
     setup_file.write_text("Hello World!")
     # Ready For Test Case
@@ -351,14 +345,10 @@ def single_staged_modify_repo():
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
     os.chdir(tdir.name)
-    subprocess.run(['git', 'init'], capture_output=True,)
+    _init_and_config_git_repo()
     # Setup Files
-    setup_file = Path(tdir.name + "/setup.py")
-    setup_file.touch()
+    (setup_file := Path(tdir.name + "/setup.py")).touch()
     setup_file.write_text("Hellow")
-    # Setup Git Config
-    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
-    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
     # Commit
     subprocess.run(['git', 'add', 'setup.py'])
     subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
@@ -378,14 +368,10 @@ def single_unstaged_delete_repo():
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
     os.chdir(tdir.name)
-    subprocess.run(['git', 'init'], capture_output=True,)
+    _init_and_config_git_repo()
     # Setup Files
-    setup_file = Path(tdir.name + "/setup.py")
-    setup_file.touch()
+    (setup_file := Path(tdir.name + "/setup.py")).touch()
     setup_file.write_text("Hellow")
-    # Setup Git Config
-    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
-    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
     # Commit
     subprocess.run(['git', 'add', 'setup.py'])
     subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
@@ -403,15 +389,10 @@ def single_staged_delete_repo():
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
     os.chdir(tdir.name)
-    subprocess.run(['git', 'init'],
-        capture_output=True,)
+    _init_and_config_git_repo()
     # Setup Files
-    setup_file = Path(tdir.name + "/setup.py")
-    setup_file.touch()
+    (setup_file := Path(tdir.name + "/setup.py")).touch()
     setup_file.write_text("Hellow")
-    # Setup Git Config
-    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
-    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
     # Commit
     subprocess.run(['git', 'add', 'setup.py'])
     subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
@@ -433,23 +414,68 @@ def single_unstaged_plus_multi_files_in_new_dir_repo():
     tdir = tempfile.TemporaryDirectory()
     initial_cwd = os.getcwd()
     os.chdir(tdir.name)
-    subprocess.run(['git', 'init'], capture_output=True,)
+    _init_and_config_git_repo()
     # Setup Files
-    setup_file = Path(tdir.name + "/setup.py")
-    setup_file.touch()
+    (setup_file := Path(tdir.name + "/setup.py")).touch()
     setup_file.write_text("Hellow")
+    # Commit
+    subprocess.run(['git', 'add', 'setup.py'])
+    subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
+    # Modify Setup
+    setup_file.write_text('"""  """')
     # Create new Dir
-    new_dir = (setup_file.parent / "test")
-    new_dir.mkdir()
+    (new_dir := (setup_file.parent / "test")).mkdir()
     # Create Files
-    new_init_file = new_dir / "__init__.py"
-    new_init_file.touch()
+    (new_init_file := new_dir / "__init__.py").touch()
     new_init_file.write_text('"""  """')
-    new_src_file = new_dir / "source_file.py"
-    new_src_file.touch()
+    (new_src_file := new_dir / "source_file.py").touch()
     new_src_file.write_text("src")
     # Ready For Test Case
     yield tdir
     # After
     os.chdir(initial_cwd)
     tdir.cleanup()
+
+
+@pytest.fixture
+def single_staged_modify_repo_plus_multi_files_in_new_dir_repo():
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = os.getcwd()
+    os.chdir(tdir.name)
+    _init_and_config_git_repo()
+    # Setup Files
+    (setup_file := Path(tdir.name + "/setup.py")).touch()
+    setup_file.write_text("Hellow")
+    # Commit
+    subprocess.run(['git', 'add', 'setup.py'])
+    subprocess.run(['git', 'commit', '-m', '"Init!"'], capture_output=True)
+    # Modify
+    setup_file.write_text("Hello World!")
+    # Stage
+    subprocess.run(['git', 'add', 'setup.py'])
+    # Create new Dir
+    (new_dir := setup_file.parent / "test").mkdir()
+    # Create Files
+    (new_init_file := new_dir / "__init__.py").touch()
+    new_init_file.write_text('"""  """')
+    (new_src_file := new_dir / "source_file.py").touch()
+    new_src_file.write_text("src")
+    # Ready For Test Case
+    yield tdir
+    # After
+    os.chdir(initial_cwd)
+    tdir.cleanup()
+
+
+def _init_and_config_git_repo():
+    subprocess.run(['git', 'init'], capture_output=True)
+    subprocess.run(['git', 'config', '--add', 'user.name', 'username101'])
+    subprocess.run(['git', 'config', '--add', 'user.email', 'email@provider.com'])
+
+
+def construct_new_cl_data_storage() -> ChangelistDataStorage:
+    """ A new empty in-memory storage object.
+    """
+    return ChangelistDataStorage(
+        new_tree(), StorageType.CHANGELISTS, storage_type.CHANGELISTS_FILE_PATH_STR
+    )
