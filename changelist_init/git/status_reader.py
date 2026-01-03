@@ -1,7 +1,6 @@
 """ Reader for the Git Status Output String.
 """
-from changelist_init.git.git_file_status import GitFileStatus
-from changelist_init.git.git_status_lists import GitStatusLists
+from changelist_init.git.git_status_lists import GitStatusLists, add_file_status, GitFileStatus
 
 
 def read_git_status_output(
@@ -17,10 +16,10 @@ def read_git_status_output(
     """
     if not isinstance(status_string, str):
         raise TypeError("Must be a String!")
-    status_lists = GitStatusLists()
+    status_lists = GitStatusLists([],[],[],[])
     for f in status_string.splitlines():
         if (file_status := read_git_status_line(f)) is not None:
-            status_lists.add_file_status(file_status)
+            add_file_status(status_lists, file_status)
         else:
             print(f"Skipped: ${f}")
     return status_lists

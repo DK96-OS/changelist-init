@@ -1,6 +1,5 @@
 """ Testing Git Status Reader Methods.
 """
-from changelist_init.git import status_reader
 from changelist_init.git.status_reader import read_git_status_line
 from changelist_init.git.status_reader import read_git_status_output
 
@@ -38,7 +37,7 @@ def test_read_git_status_line_single_unstaged_create(
 def test_read_git_status_line_single_unstaged_modify(
     git_status_line_unstaged_modify_setup
 ):
-    result = status_reader.read_git_status_line(git_status_line_unstaged_modify_setup)
+    result = read_git_status_line(git_status_line_unstaged_modify_setup)
     assert result.code == ' M'
     assert result.file_path == GIT_STATUS_FILE_PATH_SETUP
 
@@ -46,7 +45,7 @@ def test_read_git_status_line_single_unstaged_modify(
 def test_read_git_status_line_single_staged_create(
     git_status_line_staged_create_setup
 ):
-    result = status_reader.read_git_status_line(git_status_line_staged_create_setup)
+    result = read_git_status_line(git_status_line_staged_create_setup)
     assert result.code == 'A '
     assert result.file_path == GIT_STATUS_FILE_PATH_SETUP
 
@@ -54,7 +53,7 @@ def test_read_git_status_line_single_staged_create(
 def test_read_git_status_line_single_staged_modify(
     git_status_line_staged_modify_setup
 ):
-    result = status_reader.read_git_status_line(git_status_line_staged_modify_setup)
+    result = read_git_status_line(git_status_line_staged_modify_setup)
     assert result.code == 'M '
     assert result.file_path == GIT_STATUS_FILE_PATH_SETUP
 
@@ -62,7 +61,7 @@ def test_read_git_status_line_single_staged_modify(
 def test_read_git_status_line_single_partial_staged_create(
     git_status_line_partial_staged_create_setup
 ):
-    result = status_reader.read_git_status_line(git_status_line_partial_staged_create_setup)
+    result = read_git_status_line(git_status_line_partial_staged_create_setup)
     assert result.code == 'MA'
     assert result.file_path == GIT_STATUS_FILE_PATH_SETUP
 
@@ -70,7 +69,7 @@ def test_read_git_status_line_single_partial_staged_create(
 def test_read_git_status_line_single_partial_staged_modify(
     git_status_line_partial_staged_modify_setup
 ):
-    result = status_reader.read_git_status_line(git_status_line_partial_staged_modify_setup)
+    result = read_git_status_line(git_status_line_partial_staged_modify_setup)
     assert result.code == 'MM'
     assert result.file_path == GIT_STATUS_FILE_PATH_SETUP
 
@@ -79,18 +78,27 @@ def test_read_git_status_output_multi_untracked_returns_git_status_lists(
     git_status_line_multi_untracked
 ):
     result = read_git_status_output(git_status_line_multi_untracked)
-    assert len(list(result.merge_all())) == 2
+    assert len(result.untracked) == 2
 
 
 def test_read_git_status_output_multi_unstaged_create_returns_git_status_lists(
     git_status_line_multi_unstaged_create
 ):
     result = read_git_status_output(git_status_line_multi_unstaged_create)
-    assert len(list(result.merge_all())) == 2
+    assert len(result.unstaged) == 2
 
 
 def test_read_git_status_output_multi_staged_create_returns_git_status_lists(
     git_status_line_multi_staged_create
 ):
     result = read_git_status_output(git_status_line_multi_staged_create)
-    assert len(list(result.merge_all())) == 2
+    assert len(result.staged) == 2
+
+
+def test_read_git_status_output_multi_partial_staged_create_returns_git_status_lists(
+    git_status_line_partial_staged_create_setup,
+    git_status_line_partial_staged_modify_setup
+):
+    test_input = git_status_line_partial_staged_create_setup + '\n' + git_status_line_partial_staged_modify_setup
+    result = read_git_status_output(test_input)
+    assert len(result.partial_stage) == 2

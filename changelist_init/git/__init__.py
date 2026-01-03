@@ -5,7 +5,7 @@ from typing import Generator
 from changelist_data.file_change import FileChange
 
 from changelist_init.git import status_runner, status_reader, status_change_mapping
-from changelist_init.git.git_status_lists import GitStatusLists
+from changelist_init.git.git_status_lists import GitStatusLists, merge_all
 
 
 def get_status_lists(
@@ -20,7 +20,7 @@ def get_status_lists(
  list[FileChange] - The List of FileChange information from Git Status.
     """
     return status_reader.read_git_status_output(
-        status_runner.run_git_status() if not include_untracked else status_runner.run_untracked_status()
+        status_runner.run_git_status(include_untracked)
     )
 
 
@@ -37,5 +37,5 @@ def generate_file_changes(
     """
     status_lists = get_status_lists(include_untracked)
     yield from status_change_mapping.map_file_status_to_changes(
-        status_lists.merge_all() if include_untracked else status_lists.merge_tracked()
+        merge_all(status_lists, include_untracked)
     )

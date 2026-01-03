@@ -4,21 +4,21 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name="changelist-init",
-    version="0.2.2",
+    name='changelist-init',
+    version='0.3',
 	author='DK96-OS',
 	description='Initialize and update Changelists information.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://github.com/DK96-OS/changelist-init/",
+    url='https://github.com/DK96-OS/changelist-init/',
     project_urls={
-        "Issues": "https://github.com/DK96-OS/changelist-init/issues",
-        "Source Code": "https://github.com/DK96-OS/changelist-init/"
+        'Issues': 'https://github.com/DK96-OS/changelist-init/issues',
+        'Source Code': 'https://github.com/DK96-OS/changelist-init/'
     },
 	license='GPLv3',
     packages=find_packages(exclude=['test', 'test.*']),
     install_requires=[
-        'changelist-data >= 0.2.5, < 0.3',
+        'changelist-data >= 0.2.5, < 0.4',
     ],
     entry_points={
         'console_scripts': [
@@ -28,7 +28,7 @@ setup(
         ],
     },
     python_requires='>=3.10',
-    keywords=['changelist', 'git', 'vcs'],
+    keywords=['vcs', 'foci', 'changelist', 'git'],
     classifiers=[
         'Natural Language :: English',
         'Operating System :: OS Independent',

@@ -2,7 +2,6 @@
 # Info: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: Run Faster Tests on Pull Requests into Release
-
 on:
   pull_request:
     branches: [ release-* ]
@@ -16,10 +15,13 @@ jobs:
       max-parallel: 2
       fail-fast: false
       matrix:
-        python-version: [ '3.10', '3.13' ]
+        python-version: [ '3.10', '3.14' ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
         with:
@@ -29,17 +31,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest==8.4.1 pytest-cov==6.2.1
-
-      - name: Install Git
-        run: sudo apt install git
+          pip install pytest==9.0.2 pytest-cov==7.0.0
 
       - name: Run unit tests
         run: pytest test/ --cov=changelist_init --cov-report=html
 
       - name: Upload Test Coverage Reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: cl-init-cov-${{ matrix.python-version }}
           path: htmlcov/
