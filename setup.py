@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='changelist-init',
-    version='0.3',
+    version='0.4',
 	author='DK96-OS',
 	description='Initialize and update Changelists information.',
     long_description=open('README.md').read(),
