@@ -1,6 +1,7 @@
 """ Testing changelist_init Package-Level Method generate_file_changes.
 """
 import subprocess
+from pathlib import Path
 from typing import Callable
 
 import pytest
@@ -150,3 +151,64 @@ def test_generate_file_changes_all_changes_given_multi_init_this_returns_file_ch
         result = list(generate_file_changes(True))
     # Includes untracked files, but ignores Directories
     assert len(result) == 33
+
+
+def test_generate_file_changes_not_a_repo_raises_exit(temp_cwd):
+    with pytest.raises(SystemExit):
+        list(generate_file_changes(False))
+
+
+def test_get_status_lists_init_repo_returns_status_lists(temp_cwd):
+    subprocess.run(['git', 'init'], capture_output=False)
+    result = list(generate_file_changes(False))
+    assert result == []
+
+
+@pytest.mark.parametrize(
+    'file_count', [1, 10]
+)
+def test_get_status_lists_init_repo_touch_files_returns_status_lists(file_count, temp_cwd):
+    subprocess.run(['git', 'init'], capture_output=False)
+    root_dir = Path(temp_cwd.name)
+    for i in range(file_count):
+        (root_dir / f'new_python_file{i}.py').touch()
+    #
+    result = list(generate_file_changes(include_untracked=False))
+    assert len(result) == 0
+
+
+@pytest.mark.parametrize(
+    'file_count', [1, 10]
+)
+def test_get_status_lists_include_untracked_init_repo_touch_files_returns_status_lists(file_count, temp_cwd):
+    subprocess.run(['git', 'init'], capture_output=False)
+    root_dir = Path(temp_cwd.name)
+    for i in range(file_count):
+        (root_dir / f'new_python_file{i}.py').touch()
+    #
+    result = list(generate_file_changes(include_untracked=True))
+    assert len(result) == file_count
+
+
+def test_get_status_lists_init_repo_touch_files_add_half_ignore_untracked_returns_half(temp_cwd):
+    subprocess.run(['git', 'init'], capture_output=False)
+    root_dir = Path(temp_cwd.name)
+    for i in range(file_count := 10):
+        (root_dir / f'new_python_file{i}.py').touch()
+        (root_dir / f'new_java_file{i}.java').touch()
+    subprocess.run(['git', 'add', 'new_python*'], capture_output=True)
+    #
+    result = list(generate_file_changes(include_untracked=False))
+    assert len(result) == file_count
+
+
+def test_get_status_lists_init_repo_touch_files_add_half_include_untracked_returns_all(temp_cwd):
+    subprocess.run(['git', 'init'], capture_output=False)
+    root_dir = Path(temp_cwd.name)
+    for i in range(file_count := 10):
+        (root_dir / f'new_python_file{i}.py').touch()
+        (root_dir / f'new_java_file{i}.java').touch()
+    subprocess.run(['git', 'add', 'new_python*'], capture_output=True)
+    #
+    result = list(generate_file_changes(include_untracked=True))
+    assert len(result) == 2 * file_count
