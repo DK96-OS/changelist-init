@@ -8,11 +8,11 @@ def read_git_status_output(
 ) -> GitStatusLists:
     """ Read the Git Status Output String.
 
-    Fields:
-    - status_string (str): The output of Git Status operation.
+**Parameters:**
+ - status_string (str): The output of Git Status operation.
 
-    Returns:
-    GitStatusList - An object containing organized Git Status output.
+**Returns:**
+ GitStatusList - An object containing organized Git Status output.
     """
     if not isinstance(status_string, str):
         raise TypeError("Must be a String!")
@@ -29,9 +29,13 @@ def read_git_status_line(
     file_status_line: str
 ) -> GitFileStatus | None:
     """ Read a line of output from Git Status, into a GitFileStatus object.
+
+**Parameters:**
+ - file_status_line (str): The line of status output to process into a GitFileStatus object.
+
+**Returns:**
+ GitFileStatus? - The status code and file_path in a tuple, or None if the input string was not accepted.
     """
-    if not isinstance(file_status_line, str):
-        return None
     if len(file_status_line.strip()) < 3:
         return None
     if file_status_line.endswith('/'):

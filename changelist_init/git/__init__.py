@@ -5,23 +5,7 @@ from typing import Generator
 from changelist_data.file_change import FileChange
 
 from changelist_init.git import status_runner, status_reader, status_change_mapping
-from changelist_init.git.git_status_lists import GitStatusLists, merge_all
-
-
-def get_status_lists(
-    include_untracked: bool = False,
-) -> GitStatusLists:
-    """ Executes the Complete Git Status into File Change Operation.
-
-**Parameters:**
- - include_untracked (bool): Whether to include untracked files in Git Status.
-
-**Returns:**
- list[FileChange] - The List of FileChange information from Git Status.
-    """
-    return status_reader.read_git_status_output(
-        status_runner.run_git_status(include_untracked)
-    )
+from changelist_init.git.git_status_lists import merge_all
 
 
 def generate_file_changes(
@@ -32,10 +16,14 @@ def generate_file_changes(
 **Parameters:**
  - include_untracked: Whether to include untracked files in the output.
 
-**Returns:**
- Generator[FileChange] - Those precious File Changes.
+**Yields:**
+ FileChange - Those precious File Changes, created from Git Status output.
     """
-    status_lists = get_status_lists(include_untracked)
     yield from status_change_mapping.map_file_status_to_changes(
-        merge_all(status_lists, include_untracked)
+        merge_all(
+            status_lists=status_reader.read_git_status_output(
+                status_runner.run_git_status(include_untracked)
+            ),
+            include_untracked=include_untracked,
+        )
     )

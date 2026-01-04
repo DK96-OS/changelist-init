@@ -29,30 +29,6 @@ GitStatusLists = namedtuple(
 )
 
 
-def get_list(
-    status_lists: GitStatusLists,
-    tracking_status: GitTrackingStatus,
-) -> list[GitFileStatus]:
-    """ Obtain a List of File Status objects with the given Tracking Status.
-
-**Parameters:**
- - status_lists (GitStatusLists): The collections of GitFileStatus objects.
- - tracking_status (GitTrackingStatus): The status group to obtain the list for.
-
-**Returns:**
- list[GitFileStatus] - The specified list of GitFileStatus objects.
-    """
-    match tracking_status:
-        case GitTrackingStatus.UNSTAGED:
-            return status_lists.unstaged
-        case GitTrackingStatus.STAGED:
-            return status_lists.staged
-        case GitTrackingStatus.PARTIAL_STAGE:
-            return status_lists.partial_stage
-    # Default: GitTrackingStatus.UNTRACKED
-    return status_lists.untracked
-
-
 def add_file_status(
     status_lists: GitStatusLists,
     file_status: GitFileStatus,
@@ -68,7 +44,15 @@ def add_file_status(
     """
     if (tracking_status := from_str(file_status.code)) is None:
         return False
-    get_list(status_lists, tracking_status).append(file_status)
+    match tracking_status:
+        case GitTrackingStatus.UNSTAGED:
+            status_lists.unstaged.append(file_status)
+        case GitTrackingStatus.STAGED:
+            status_lists.staged.append(file_status)
+        case GitTrackingStatus.PARTIAL_STAGE:
+            status_lists.partial_stage.append(file_status)
+        # Default: GitTrackingStatus.UNTRACKED
+        case _: status_lists.untracked.append(file_status)
     return True
 
 
