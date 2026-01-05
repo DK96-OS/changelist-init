@@ -1,28 +1,33 @@
 """ Reader for the Git Status Output String.
 """
-from changelist_init.git.git_status_lists import GitStatusLists, add_file_status, GitFileStatus
+from collections import namedtuple
+from typing import Generator
 
 
-def read_git_status_output(
+GitFileStatus = namedtuple(
+    'GitFileStatus',
+    'code file_path',
+)
+
+
+def generate_file_status(
     status_string: str,
-) -> GitStatusLists:
-    """ Read the Git Status Output String.
+) -> Generator[GitFileStatus, None, None]:
+    """ Generate GitFileStatus objects from the output of Git Status operation.
 
 **Parameters:**
- - status_string (str): The output of Git Status operation.
+ - status_string (str): The output of the Git Status operation, as a string.
 
-**Returns:**
- GitStatusList - An object containing organized Git Status output.
+**Yields:**
+ GitFileStatus - The file information including status code and file path.
     """
     if not isinstance(status_string, str):
         raise TypeError("Must be a String!")
-    status_lists = GitStatusLists([],[],[],[])
     for f in status_string.splitlines():
         if (file_status := read_git_status_line(f)) is not None:
-            add_file_status(status_lists, file_status)
+            yield file_status
         else:
             print(f"Skipped: ${f}")
-    return status_lists
 
 
 def read_git_status_line(
