@@ -1,5 +1,7 @@
 """ Testing Input Init Package Method.
 """
+from pathlib import Path
+
 import pytest
 from changelist_data.storage.storage_type import CHANGELISTS_FILE_PATH_STR, WORKSPACE_FILE_PATH_STR
 
@@ -30,7 +32,7 @@ def test_validate_input_invalid_changelists_raises_exit(temp_cwd):
 def test_validate_input_default_changelists_file_returns_valid_input_data(temp_cwd):
     args = ['--changelists_file', CHANGELISTS_FILE_PATH_STR]
     result = validate_input(args)
-    assert str(result.storage.update_path) == CHANGELISTS_FILE_PATH_STR
+    assert result.storage.update_path == Path(CHANGELISTS_FILE_PATH_STR)
     assert not result.include_untracked
 
 
@@ -58,7 +60,7 @@ def test_validate_input_default_workspace_file_contains_minimum_xml(temp_cwd):
     write_workspace_file(MINIMUM_WORKSPACE_XML_FILE_CONTENTS)
     args = ['--workspace_file', WORKSPACE_FILE_PATH_STR]
     result = validate_input(args)
-    assert str(result.storage.update_path) == WORKSPACE_FILE_PATH_STR
+    assert result.storage.update_path == Path(WORKSPACE_FILE_PATH_STR)
 
 
 def test_validate_input_default_workspace_file_contains_xml_cl_manager(temp_cwd):
@@ -66,7 +68,7 @@ def test_validate_input_default_workspace_file_contains_xml_cl_manager(temp_cwd)
     write_workspace_file(DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS)
     args = ['--workspace_file', WORKSPACE_FILE_PATH_STR]
     result = validate_input(args)
-    assert str(result.storage.update_path) == WORKSPACE_FILE_PATH_STR
+    assert result.storage.update_path == Path(WORKSPACE_FILE_PATH_STR)
     default_cl = result.storage.get_changelists()[0]
     assert default_cl.id == data._DEFAULT_CHANGELIST_ID
     assert default_cl.name == data._DEFAULT_CHANGELIST_NAME
