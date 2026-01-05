@@ -14,6 +14,7 @@ from changelist_data import file_change, ChangelistDataStorage, new_tree, Storag
 from changelist_data.changelist import Changelist
 from changelist_data.file_change import FileChange
 from changelist_data.storage import storage_type
+from changelist_data.storage.storage_type import WORKSPACE_FILE_PATH_STR
 
 from changelist_init import InputData
 
@@ -479,3 +480,12 @@ def construct_new_cl_data_storage() -> ChangelistDataStorage:
     return ChangelistDataStorage(
         new_tree(), StorageType.CHANGELISTS, storage_type.CHANGELISTS_FILE_PATH_STR
     )
+
+
+def write_workspace_file(contents: str):
+    """ Write string to the default workspace file location.
+ - Ensure that you use a temp_cwd with this method.
+    """
+    Path('.idea').mkdir()
+    (workspace_path := Path(WORKSPACE_FILE_PATH_STR)).touch()
+    workspace_path.write_text(contents)
