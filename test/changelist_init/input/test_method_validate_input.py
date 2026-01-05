@@ -5,7 +5,8 @@ from changelist_data.storage.storage_type import CHANGELISTS_FILE_PATH_STR, WORK
 
 from changelist_init import data
 from changelist_init.input import validate_input
-from test.changelist_init.conftest import write_workspace_file
+from test.changelist_init.conftest import write_workspace_file, MINIMUM_WORKSPACE_XML_FILE_CONTENTS, \
+    DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS
 
 
 def test_validate_input_(temp_cwd):
@@ -54,9 +55,7 @@ def test_validate_input_default_workspace_file_contains_incomplete_xml(temp_cwd)
 
 def test_validate_input_default_workspace_file_contains_minimum_xml(temp_cwd):
     # At least the ChangeListManager Component must exist
-    write_workspace_file("""<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-</project>""")
+    write_workspace_file(MINIMUM_WORKSPACE_XML_FILE_CONTENTS)
     args = ['--workspace_file', WORKSPACE_FILE_PATH_STR]
     result = validate_input(args)
     assert str(result.storage.update_path) == WORKSPACE_FILE_PATH_STR
@@ -64,12 +63,7 @@ def test_validate_input_default_workspace_file_contains_minimum_xml(temp_cwd):
 
 def test_validate_input_default_workspace_file_contains_xml_cl_manager(temp_cwd):
     # At least the ChangeListManager Component must exist
-    write_workspace_file(f"""<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-    <component name="ChangeListManager">
-        <list default="true" id="{data._DEFAULT_CHANGELIST_ID}" name="{data._DEFAULT_CHANGELIST_NAME}" comment="" />
-    </component>
-</project>""")
+    write_workspace_file(DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS)
     args = ['--workspace_file', WORKSPACE_FILE_PATH_STR]
     result = validate_input(args)
     assert str(result.storage.update_path) == WORKSPACE_FILE_PATH_STR
