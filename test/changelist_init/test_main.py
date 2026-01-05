@@ -5,10 +5,11 @@ from pathlib import Path
 import subprocess
 
 import pytest
-from changelist_data.storage.storage_type import CHANGELISTS_FILE_PATH_STR
+from changelist_data.storage.storage_type import CHANGELISTS_FILE_PATH_STR, WORKSPACE_FILE_PATH_STR
 
 from changelist_init.__main__ import main
-
+from test.changelist_init.conftest import write_workspace_file, MINIMUM_WORKSPACE_XML_FILE_CONTENTS, \
+    DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS
 
 # The Size of the initial Changelist Data XML File, containing the empty Default Changelist.
 INITIAL_EMPTY_FILE_SIZE = 172
@@ -28,6 +29,53 @@ def test_main_no_cl_data_file_creates_new_empty_changelists_data_file(temp_cwd):
     assert (cl_data_file := Path(CHANGELISTS_FILE_PATH_STR)).exists()
     file_contents = cl_data_file.read_text()
     assert len(file_contents) == INITIAL_EMPTY_FILE_SIZE
+
+
+def test_main_workspace_no_idea_file_creates_new_empty_changelists_data_file(temp_cwd):
+    sys.argv = ['git', 'init',]
+    subprocess.run(['git', 'init'], capture_output=True)
+    sys.argv = ['changelist-init', '-w']
+    main()
+    # CL-Init does not create new Workspace files, even if workspace_overwrite if enabled.
+    assert (cl_data_file := Path(CHANGELISTS_FILE_PATH_STR)).exists()
+    file_contents = cl_data_file.read_text()
+    assert len(file_contents) == INITIAL_EMPTY_FILE_SIZE
+
+
+def test_main_workspace_with_idea_file_creates_new_empty_changelists_data_file(temp_cwd):
+    sys.argv = ['git', 'init',]
+    subprocess.run(['git', 'init'], capture_output=True)
+    #
+    sys.argv = ['changelist-init', '-w']
+    main()
+    # CL-Init does not create new Workspace files, even if workspace_overwrite if enabled.
+    assert (cl_data_file := Path(CHANGELISTS_FILE_PATH_STR)).exists()
+    file_contents = cl_data_file.read_text()
+    assert len(file_contents) == INITIAL_EMPTY_FILE_SIZE
+
+
+def test_main_workspace_minimum_workspace_xml_empty_repo_adds_default_cl(temp_cwd):
+    sys.argv = ['git', 'init',]
+    subprocess.run(['git', 'init'], capture_output=True)
+    write_workspace_file(MINIMUM_WORKSPACE_XML_FILE_CONTENTS)
+    sys.argv = ['changelist-init', '-w']
+    main()
+    assert (ws_data_file := Path(WORKSPACE_FILE_PATH_STR)).exists()
+    file_contents = ws_data_file.read_text()
+    # Adds the Default Changelist
+    assert file_contents == DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS
+
+
+def test_main_workspace_default_cl_workspace_xml_empty_repo_has_same_contents(temp_cwd):
+    sys.argv = ['git', 'init',]
+    subprocess.run(['git', 'init'], capture_output=True)
+    write_workspace_file(DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS)
+    sys.argv = ['changelist-init', '-w']
+    main()
+    assert (ws_data_file := Path(WORKSPACE_FILE_PATH_STR)).exists()
+    file_contents = ws_data_file.read_text()
+    # Adds the Default Changelist
+    assert file_contents == DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS
 
 
 def test_main_single_untracked_repo_ignores_untracked_file(
