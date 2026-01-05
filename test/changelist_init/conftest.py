@@ -493,13 +493,11 @@ def write_workspace_file(contents: str):
 
 MINIMUM_WORKSPACE_XML_FILE_CONTENTS = """<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ChangeListManager" />
-</project>"""
+  <component name="ChangeListManager" /></project>"""
 
 
 DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS = f"""<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="{data._DEFAULT_CHANGELIST_ID}" name="{data._DEFAULT_CHANGELIST_NAME}" comment="" />
-  </component>
-</project>"""
+  </component></project>"""
