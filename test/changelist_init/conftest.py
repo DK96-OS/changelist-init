@@ -23,7 +23,7 @@ FC_PATH_REQUIREMENTS = '/requirements.txt'
 
 _SAMPLE_FC_0 = FC_PATH_SETUP
 _SAMPLE_FC_1 = "/test/__init__.py"
-_SAMPLE_FC_2 = "/test/test_method_generate_file_changes.py"
+_SAMPLE_FC_2 = "/test/source_file.py"
 
 
 def _sample_fc_n(n: int = 1) -> str:
