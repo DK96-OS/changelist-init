@@ -1,7 +1,6 @@
 """ Testing Git Status Reader Methods.
 """
-from changelist_init.git.status_reader import read_git_status_line
-from changelist_init.git.status_reader import read_git_status_output
+from changelist_init.git.status_reader import read_git_status_line, generate_file_status
 
 from test.changelist_init.conftest import GIT_STATUS_FILE_PATH_SETUP
 
@@ -74,31 +73,31 @@ def test_read_git_status_line_single_partial_staged_modify(
     assert result.file_path == GIT_STATUS_FILE_PATH_SETUP
 
 
-def test_read_git_status_output_multi_untracked_returns_git_status_lists(
+def test_generate_file_status_multi_untracked_returns_git_status_lists(
     git_status_line_multi_untracked
 ):
-    result = read_git_status_output(git_status_line_multi_untracked)
-    assert len(result.untracked) == 2
+    result = list(generate_file_status(git_status_line_multi_untracked))
+    assert len(result) == 2
 
 
-def test_read_git_status_output_multi_unstaged_create_returns_git_status_lists(
+def test_generate_file_status_multi_unstaged_create_returns_git_status_lists(
     git_status_line_multi_unstaged_create
 ):
-    result = read_git_status_output(git_status_line_multi_unstaged_create)
-    assert len(result.unstaged) == 2
+    result = list(generate_file_status(git_status_line_multi_unstaged_create))
+    assert len(result) == 2
 
 
-def test_read_git_status_output_multi_staged_create_returns_git_status_lists(
+def test_generate_file_status_multi_staged_create_returns_git_status_lists(
     git_status_line_multi_staged_create
 ):
-    result = read_git_status_output(git_status_line_multi_staged_create)
-    assert len(result.staged) == 2
+    result = list(generate_file_status(git_status_line_multi_staged_create))
+    assert len(result) == 2
 
 
-def test_read_git_status_output_multi_partial_staged_create_returns_git_status_lists(
+def test_generate_file_status_multi_partial_staged_create_returns_git_status_lists(
     git_status_line_partial_staged_create_setup,
     git_status_line_partial_staged_modify_setup
 ):
     test_input = git_status_line_partial_staged_create_setup + '\n' + git_status_line_partial_staged_modify_setup
-    result = read_git_status_output(test_input)
-    assert len(result.partial_stage) == 2
+    result = list(generate_file_status(test_input))
+    assert len(result) == 2
