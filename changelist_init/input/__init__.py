@@ -2,7 +2,7 @@
 """
 from pathlib import Path
 
-from changelist_data import ChangelistDataStorage, validate_string_argument, load_storage, StorageType, new_tree, get_default_path
+from changelist_data import ChangelistDataStorage, validate_string_argument, load_storage, StorageType
 
 from changelist_init.input.argument_parser import parse_arguments
 from changelist_init.input.input_data import InputData
@@ -45,16 +45,4 @@ def _validate_storage_arguments(
         if (workspace_storage := load_storage(StorageType.WORKSPACE)) is not None:
             return workspace_storage
     # Only Changelist Data File Enabled
-    return _only_changelist_storage()
-
-
-def _only_changelist_storage() -> ChangelistDataStorage:
-    """ Load existing Changelist data file (default location) or create a new in-memory storage object.
-    """
-    if (existing_storage := load_storage(StorageType.CHANGELISTS)) is not None:
-        return existing_storage
-    return ChangelistDataStorage(
-        new_tree(),
-        StorageType.CHANGELISTS,
-        get_default_path(StorageType.CHANGELISTS)
-    )
+    return load_storage(StorageType.CHANGELISTS)
