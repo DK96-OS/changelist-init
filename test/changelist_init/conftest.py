@@ -2,6 +2,7 @@
 """
 import os
 import subprocess
+import sys
 import tempfile
 from os import getcwd, chdir
 from pathlib import Path
@@ -303,6 +304,20 @@ def temp_cwd():
 
 
 @pytest.fixture
+def temp_cwd_repo():
+    """ Expands on Temporary Working Directory with a Git Repo init subprocess.
+    """
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = getcwd()
+    chdir(tdir.name)
+    sys.argv = ['git', 'init', ]
+    subprocess.run(['git', 'init'], capture_output=True)
+    yield tdir
+    chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
 def single_untracked_repo():
     """ A Git Repo, based on temp_cwd fixture, containing a single untracked file.
     """
@@ -501,3 +516,17 @@ DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS = f"""<?xml version="1.0" encoding="UTF-8
   <component name="ChangeListManager">
     <list default="true" id="{data._DEFAULT_CHANGELIST_ID}" name="{data._DEFAULT_CHANGELIST_NAME}" comment="" />
   </component></project>"""
+
+
+@pytest.fixture()
+def empty_changelists_xml() -> str:
+    return """<?xml version="1.0" encoding="UTF-8"?>
+<changelists></changelists>"""
+
+
+@pytest.fixture()
+def default_changelists_xml() -> str:
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<changelists>
+  <list default="true" id="{data._DEFAULT_CHANGELIST_ID}" name="{data._DEFAULT_CHANGELIST_NAME}" comment="" />
+</changelists>"""
