@@ -6,6 +6,7 @@
  - changelists_file (str?): The string path to the Changelists Data File.
  - workspace_file (str?): The string path to the Workspace File.
  - include_untracked (bool): Whether to include untracked files.
+ - enable_workspace_overwrite (bool): Indicates that Workspace is the preferred storage option, if present.
 """
 from argparse import ArgumentParser
 from collections import namedtuple
@@ -20,8 +21,9 @@ ArgumentData = namedtuple(
         'changelists_file',
         'workspace_file',
         'include_untracked',
+        'enable_workspace_overwrite',
     ),
-    defaults=(None, None, False),
+    defaults=(None, None, False, False),
 )
 
 
@@ -58,6 +60,7 @@ def _validate_arguments(
         changelists_file=parsed_args.changelists_file,
         workspace_file=parsed_args.workspace_file,
         include_untracked=parsed_args.include_untracked,
+        enable_workspace_overwrite=parsed_args.enable_workspace_overwrite,
     )
 
 
@@ -69,7 +72,7 @@ def _define_arguments() -> ArgumentParser:
  argparse.ArgumentParser - An instance with all supported Arguments.
     """
     parser = ArgumentParser(
-        description='Initializes and updates the Changelist data storage file with git status information.',
+        description='Initializes and updates the Changelist data storage file with git status information. Provides two options for data storage: one independent file option and one that integrates with the IDEA workspace file.',
     )
     # Introduced in Version 3.14: Color, SuggestOnError.
     parser.color = True
@@ -79,18 +82,24 @@ def _define_arguments() -> ArgumentParser:
         '--changelists_file',
         type=str,
         default=None,
-        help='The Path to the Changelists Data File. Searches default paths if none.',
+        help='The Path to the Changelists Data File. Searches default path (.changelists/data.xml) if none.',
     )
     parser.add_argument(
         '--workspace_file',
         type=str,
         default=None,
-        help='The Path to the Workspace Data File. Searches default paths if none.',
+        help='The Path to the Workspace Data File. Useful if not in the default path (.idea/workspace.xml). Implies --enable_workspace_overwrite.',
     )
     parser.add_argument(
         '--include_untracked', '-u',
         action='store_true',
         default=False,
         help='The option to include untracked files in changelists.',
+    )
+    parser.add_argument(
+        '--enable_workspace_overwrite', '-w',
+        action='store_true',
+        default=False,
+        help='Enable overwriting Workspace file in the default location. Prefers Workspace over Changelist data file, but creates Changelist data file if neither exists.',
     )
     return parser

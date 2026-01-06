@@ -7,12 +7,13 @@ from changelist_data.file_change import FileChange
 
 
 def create_fc_to_cl_dict(
-    changelists: list[Changelist],
+    changelists: Iterable[Changelist],
 ) -> dict[str, Changelist]:
     """ Initialize the Map of Existing FileChanges.
+ - Clears each Changelist contents as they are inserted into the map.
 
 **Parameters:
- - changelists (list[Changelist]): The changelists to be inserted into the map.
+ - changelists (Iterable[Changelist]): The changelists to be inserted into the map.
 
 **Returns:**
  dict[str, Changelist] - A map from file path to the Changelist object that contains it.
@@ -21,6 +22,7 @@ def create_fc_to_cl_dict(
     for cl in changelists:
         for fc in cl.changes:
             cl_map[_get_first_path(fc)] = cl
+        cl.changes.clear()
     return cl_map
 
 
@@ -54,22 +56,19 @@ def _get_first_path(file: FileChange) -> str:
 
 
 def merge_fc_generator(
-    changelists: list[Changelist],
+    changelists: Iterable[Changelist],
     file_changes: Iterable[FileChange],
 ) -> Generator[FileChange, None, None]:
     """ Merge FC into existing CL, applying the fc_to_cl_map module.
 
 **Parameters:**
- - existing_lists (list[Changelist]): The list of existing Changelists.
- - files (list[FileChange]): The list of FileChange objects produced during initialization.
+ - existing_lists (Iterable[Changelist]): The list of existing Changelists.
+ - files (Iterable[FileChange]): The iterable FileChange objects produced during initialization.
 
 **Yields:**
- Generator[FileChange] - The FileChange objects that are new, not present in existing Changelists.
+ FileChange - The FileChange objects that are new, not present in existing Changelists.
     """
     cl_map = create_fc_to_cl_dict(changelists)
-    # Clear Existing Lists before merging new Files
-    for cl in changelists:
-        cl.changes.clear()
     # Search for matches using map
     for fc in file_changes:
         if not offer_fc_to_cl_dict(cl_map, fc):

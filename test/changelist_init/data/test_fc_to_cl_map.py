@@ -4,7 +4,7 @@ import pytest
 from changelist_data import file_change, Changelist
 from changelist_data.file_change import create_fc
 
-from changelist_init.fc_to_cl_map import create_fc_to_cl_dict, offer_fc_to_cl_dict, merge_fc_generator
+from changelist_init.data.fc_to_cl_map import create_fc_to_cl_dict, offer_fc_to_cl_dict, merge_fc_generator
 from test.changelist_init.conftest import get_sample_fc_path, cl_sample_list, _SAMPLE_FC_0, root_cl_create_file, \
     _SAMPLE_FC_1, get_cl
 
@@ -20,7 +20,8 @@ def test_create_fc_to_cl_dict_():
     ]))
     assert len(result.keys()) == 1
     cl: Changelist = result[get_sample_fc_path(0)]
-    assert len(cl.changes) == 1
+    # Changes are cleared from the Changelist
+    assert len(cl.changes) == 0
 
 
 def test_create_fc_to_cl_dict_create_sample_fc_3():
@@ -32,13 +33,13 @@ def test_create_fc_to_cl_dict_create_sample_fc_3():
     assert len(result.keys()) == 3
     #
     cl0: Changelist = result[get_sample_fc_path(0)]
-    assert len(cl0.changes) == 1
+    assert len(cl0.changes) == 0
     #
     cl1: Changelist = result[get_sample_fc_path(1)]
-    assert len(cl1.changes) == 1
+    assert len(cl1.changes) == 0
     #
     cl2: Changelist = result[get_sample_fc_path(2)]
-    assert len(cl2.changes) == 1
+    assert len(cl2.changes) == 0
 
 
 @pytest.mark.parametrize(
@@ -82,10 +83,7 @@ def test_offer_fc_to_cl_dict_create_sample_fc_3():
         ' c',
         '  c',
     ])
-    test_map = create_fc_to_cl_dict(test_changelists)
-    # The Changelists should be cleared before offer method.
-    for cl in test_changelists:
-        cl.changes.clear()
+    test_map = create_fc_to_cl_dict(test_changelists) # The Changelists are cleared by this method.
     # The map contains empty changelists
     for i in range(3):
         cl: Changelist = test_map[get_sample_fc_path(i)]

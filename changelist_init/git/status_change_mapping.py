@@ -6,7 +6,7 @@ from typing import Callable, Iterable, Generator
 from changelist_data import file_change
 from changelist_data.file_change import FileChange
 
-from changelist_init.git.git_status_lists import GitFileStatus
+from changelist_init.git.status_reader import GitFileStatus
 
 
 def map_file_status_to_changes(
@@ -17,8 +17,8 @@ def map_file_status_to_changes(
 **Parameters:**
  - git_files (Iterable[GitFileStatus]): An iterable or Generator providing GitFileStatus objects.
 
-**Returns:**
- FileChange - Yield by Generator.
+**Yields:**
+ FileChange - Generated File Changes.
     """
     for code, group in groupby(git_files, lambda w: w.code):
         if (mapping_function := get_status_code_change_map(code)) is None:

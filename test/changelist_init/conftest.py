@@ -2,6 +2,7 @@
 """
 import os
 import subprocess
+import sys
 import tempfile
 from os import getcwd, chdir
 from pathlib import Path
@@ -14,8 +15,9 @@ from changelist_data import file_change, ChangelistDataStorage, new_tree, Storag
 from changelist_data.changelist import Changelist
 from changelist_data.file_change import FileChange
 from changelist_data.storage import storage_type
+from changelist_data.storage.storage_type import WORKSPACE_FILE_PATH_STR
 
-from changelist_init import InputData
+from changelist_init import InputData, data
 
 
 FC_PATH_SETUP = '/setup.py'
@@ -23,7 +25,7 @@ FC_PATH_REQUIREMENTS = '/requirements.txt'
 
 _SAMPLE_FC_0 = FC_PATH_SETUP
 _SAMPLE_FC_1 = "/test/__init__.py"
-_SAMPLE_FC_2 = "/test/test_method_generate_file_changes.py"
+_SAMPLE_FC_2 = "/test/source_file.py"
 
 
 def _sample_fc_n(n: int = 1) -> str:
@@ -302,6 +304,20 @@ def temp_cwd():
 
 
 @pytest.fixture
+def temp_cwd_repo():
+    """ Expands on Temporary Working Directory with a Git Repo init subprocess.
+    """
+    tdir = tempfile.TemporaryDirectory()
+    initial_cwd = getcwd()
+    chdir(tdir.name)
+    sys.argv = ['git', 'init', ]
+    subprocess.run(['git', 'init'], capture_output=True)
+    yield tdir
+    chdir(initial_cwd)
+    tdir.cleanup()
+
+
+@pytest.fixture
 def single_untracked_repo():
     """ A Git Repo, based on temp_cwd fixture, containing a single untracked file.
     """
@@ -479,3 +495,38 @@ def construct_new_cl_data_storage() -> ChangelistDataStorage:
     return ChangelistDataStorage(
         new_tree(), StorageType.CHANGELISTS, storage_type.CHANGELISTS_FILE_PATH_STR
     )
+
+
+def write_workspace_file(contents: str):
+    """ Write string to the default workspace file location.
+ - Ensure that you use a temp_cwd with this method.
+    """
+    Path('.idea').mkdir()
+    (workspace_path := Path(WORKSPACE_FILE_PATH_STR)).touch()
+    workspace_path.write_text(contents)
+
+
+MINIMUM_WORKSPACE_XML_FILE_CONTENTS = """<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager" /></project>"""
+
+
+DEFAULT_CL_WORKSPACE_XML_FILE_CONTENTS = f"""<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="{data._DEFAULT_CHANGELIST_ID}" name="{data._DEFAULT_CHANGELIST_NAME}" comment="" />
+  </component></project>"""
+
+
+@pytest.fixture()
+def empty_changelists_xml() -> str:
+    return """<?xml version="1.0" encoding="UTF-8"?>
+<changelists></changelists>"""
+
+
+@pytest.fixture()
+def default_changelists_xml() -> str:
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<changelists>
+  <list default="true" id="{data._DEFAULT_CHANGELIST_ID}" name="{data._DEFAULT_CHANGELIST_NAME}" comment="" />
+</changelists>"""

@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <sorting>
+    <changelist name="CL-Init Data Package" module="module">
+        <files path_start="changelist_init/data" />
+        <files file_ext="py" />
+    </changelist>
     <changelist name="CL-Init Input Package" module="module">
         <files path_start="changelist_init/input" />
         <files file_ext="py" />
@@ -20,6 +24,10 @@
     <changelist name="Test Main Package">
         <files path_end="changelist_init" />
         <files path_start="test/changelist_init" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Data Package">
+        <files path_start="test/changelist_init/data" />
         <files file_ext="py" />
     </changelist>
     <changelist name="Test Input Package">
